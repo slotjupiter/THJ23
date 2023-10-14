@@ -1,0 +1,27 @@
+head.png
+size:2048,1024
+filter:Linear,Linear
+pma:true
+Layer 1
+bounds:1241,308,225,304
+Layer 1 Copy
+bounds:1241,614,282,404
+Layer 2 Copy 2
+bounds:1241,238,131,68
+offsets:8,8,147,84
+Layer 2 Copy 3
+bounds:2,2,51,59
+offsets:8,8,67,75
+Layer 2 Copy 4
+bounds:1525,737,115,67
+offsets:8,8,131,83
+Layer 2 Copy 5
+bounds:1468,556,56,54
+offsets:8,8,72,70
+rotate:90
+Layer 2 Copy 6
+bounds:2,63,955,1237
+rotate:90
+Layer 2 Copy 7
+bounds:1525,806,277,212
+offsets:0,3,277,217
