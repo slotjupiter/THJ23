@@ -1,0 +1,57 @@
+50x150_human.png
+size:256,64
+filter:Linear,Linear
+pma:true
+L_arm_A
+bounds:106,46,16,34
+rotate:90
+L_arm_B
+bounds:88,8,12,35
+L_ear Copy
+bounds:102,8,6,7
+offsets:1,1,9,10
+rotate:90
+L_eye Copy
+bounds:2,2,7,8
+offsets:1,1,9,9
+L_foot Copy
+bounds:230,40,24,22
+L_hand
+bounds:137,19,15,20
+offsets:0,0,16,20
+rotate:90
+L_leg Copy 2
+bounds:56,2,15,41
+L_thigh Copy
+bounds:36,15,18,47
+R_arm_A
+bounds:102,16,15,27
+R_arm_B
+bounds:119,18,16,26
+R_eye Copy
+bounds:11,3,6,7
+offsets:0,1,7,9
+R_foot
+bounds:204,39,24,23
+R_hand
+bounds:159,14,11,20
+R_leg_A
+bounds:56,45,17,48
+rotate:90
+R_leg_B
+bounds:73,2,13,41
+offsets:1,0,15,41
+chest Copy
+bounds:2,12,32,50
+head Copy
+bounds:142,36,26,29
+rotate:90
+hip Copy
+bounds:173,35,27,29
+rotate:90
+mouth Copy
+bounds:190,26,10,7
+offsets:1,0,11,8
+neck Copy
+bounds:172,17,16,16
+offsets:0,1,17,17
