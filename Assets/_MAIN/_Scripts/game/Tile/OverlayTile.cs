@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using static THJ.ArrowTranslator;
 
 namespace THJ
 {
@@ -10,6 +11,7 @@ namespace THJ
         [ReadOnly] public int distanceFromStart;
         [ReadOnly] public int distanceFromEnd;
         public int sumDistance { get { return distanceFromStart + distanceFromEnd; } }
+        public bool canMoveTo = false;
         public bool isBlocked = false;
 
         public OverlayTile Previous;
@@ -19,6 +21,7 @@ namespace THJ
 
         SpriteRenderer spriteRenderer;
         Color defaultColor;
+        Color showColor;
         Color hideColor;
 
         private void Start()
@@ -27,37 +30,40 @@ namespace THJ
             if (gameObject.GetComponent<SpriteRenderer>())
                 spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
             defaultColor = gameObject.GetComponent<SpriteRenderer>().color;
+            showColor = new(defaultColor.r, defaultColor.g, defaultColor.b, 1f);
         }
 
         private void Update()
         {
-            // if (Input.GetMouseButtonDown(0))
-            // {
-            //     HideTile();
-            // }
+            if (Input.GetMouseButtonDown(0))
+            {
+                HideTile();
+            }
         }
 
         public void ShowTile()
         {
-            spriteRenderer.DOColor(defaultColor, 0.15f);
+            canMoveTo = true;
+            spriteRenderer.color = showColor;
         }
 
         public void HideTile()
         {
-            spriteRenderer.DOColor(hideColor, 0.15f);
+            canMoveTo = false;
+            spriteRenderer.color = hideColor;
         }
 
-        // public void SetSprite(ArrowDirection d)
-        // {
-        //     if (d == ArrowDirection.None)
-        //         GetComponentsInChildren<SpriteRenderer>()[1].color = new Color(1, 1, 1, 0);
-        //     else
-        //     {
-        //         GetComponentsInChildren<SpriteRenderer>()[1].color = new Color(1, 1, 1, 1);
-        //         GetComponentsInChildren<SpriteRenderer>()[1].sprite = arrows[(int)d];
-        //         GetComponentsInChildren<SpriteRenderer>()[1].sortingOrder = gameObject.GetComponent<SpriteRenderer>().sortingOrder;
-        //     }
-        // }
+        public void SetSprite(ArrowDirection d)
+        {
+            if (d == ArrowDirection.None)
+                GetComponentsInChildren<SpriteRenderer>()[1].color = new Color(1, 1, 1, 0);
+            else
+            {
+                GetComponentsInChildren<SpriteRenderer>()[1].color = new Color(1, 1, 1, 1);
+                GetComponentsInChildren<SpriteRenderer>()[1].sprite = arrows[(int)d];
+                // GetComponentsInChildren<SpriteRenderer>()[1].sortingOrder = gameObject.GetComponent<SpriteRenderer>().sortingOrder;
+            }
+        }
     }
 }
 
