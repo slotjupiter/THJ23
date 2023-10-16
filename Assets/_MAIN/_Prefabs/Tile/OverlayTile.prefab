@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 5735734823096726039}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.029, y: -0.141, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -99,6 +99,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddb6f02260370ab4184250f0e363011e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  distanceFromStart: 0
+  distanceFromEnd: 0
+  isBlocked: 0
+  Previous: {fileID: 0}
+  gridLocation: {x: 0, y: 0, z: 0}
+  arrows: []
 --- !u!60 &6933517844850643669
 PolygonCollider2D:
   m_ObjectHideFlags: 0

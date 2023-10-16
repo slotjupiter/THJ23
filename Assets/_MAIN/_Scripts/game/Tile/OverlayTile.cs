@@ -31,10 +31,10 @@ namespace THJ
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                HideTile();
-            }
+            // if (Input.GetMouseButtonDown(0))
+            // {
+            //     HideTile();
+            // }
         }
 
         public void ShowTile()
