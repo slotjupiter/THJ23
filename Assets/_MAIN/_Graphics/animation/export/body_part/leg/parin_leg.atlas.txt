@@ -1,0 +1,20 @@
+parin_leg.png
+size:2048,1024
+filter:Linear,Linear
+pma:true
+Gradient map 1 Copy
+bounds:1453,802,50,62
+Gradient map 1 Copy 2
+bounds:1453,777,35,23
+eye
+bounds:1505,850,16,14
+offsets:1,1,18,16
+face
+bounds:2,61,163,240
+mouth_eye
+bounds:167,263,40,38
+parin_leg
+bounds:2,303,561,1449
+rotate:90
+under_face
+bounds:2,2,55,57
