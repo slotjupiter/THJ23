@@ -1,17 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using THJ;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Random = System.Random;
 
 public class MapManager : MonoBehaviour
 {
+    GameInfo gameInfo;
     public static MapManager Instance;
 
     public Tilemap mainTilemap;
     public GameObject overlayTilePrefab;
     public GameObject overlayContainer;
     public Dictionary<Vector2Int, OverlayTile> map;
+    public OverlayTile spawnPoint;
 
     private void Awake()
     {
@@ -19,6 +24,8 @@ public class MapManager : MonoBehaviour
             Destroy(gameObject);
         else
             Instance = this;
+
+        if (!gameInfo) gameInfo = FindObjectOfType<GameInfo>();
     }
 
     private void Start()
@@ -45,10 +52,19 @@ public class MapManager : MonoBehaviour
                         overlayTile.transform.position = new Vector3(cellWorldPosition.x, cellWorldPosition.y, cellWorldPosition.z + 1);
                         overlayTile.GetComponent<SpriteRenderer>().sortingOrder = mainTilemap.GetComponent<TilemapRenderer>().sortingOrder;
                         overlayTile.gameObject.GetComponent<OverlayTile>().gridLocation = new Vector3Int(x, y, z);
-                        
+
                         map.Add(new Vector2Int(x, y), overlayTile.gameObject.GetComponent<OverlayTile>());
                     }
                 }
+            }
+
+            if (gameInfo.tileCursorSystem.character == null)
+            {
+                Random rand = new Random();
+                OverlayTile randomTile = map.ElementAt(rand.Next(0, map.Count)).Value;
+                gameInfo.tileCursorSystem.character = Instantiate(gameInfo.characterPrefab).GetComponent<THJ.CharacterInfo>();
+                gameInfo.tileCursorSystem.PositionCharacterOnLine(randomTile);
+                // gameInfo.tileCursorSystem.GetInRangeTiles();
             }
             // }
         }

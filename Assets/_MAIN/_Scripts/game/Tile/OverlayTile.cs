@@ -8,6 +8,7 @@ namespace THJ
 {
     public class OverlayTile : MonoBehaviour
     {
+        GameInfo gameInfo;
         [ReadOnly] public int distanceFromStart;
         [ReadOnly] public int distanceFromEnd;
         public int sumDistance { get { return distanceFromStart + distanceFromEnd; } }
@@ -26,6 +27,7 @@ namespace THJ
 
         private void Start()
         {
+            gameInfo = FindObjectOfType<GameInfo>();
             hideColor = new(0, 0, 0, 0);
             if (gameObject.GetComponent<SpriteRenderer>())
                 spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
@@ -35,7 +37,7 @@ namespace THJ
 
         private void Update()
         {
-            if (Input.GetMouseButtonDown(0))
+            if (gameInfo.isMoving)
             {
                 HideTile();
             }

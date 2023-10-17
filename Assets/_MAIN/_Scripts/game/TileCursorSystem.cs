@@ -12,7 +12,7 @@ namespace THJ
 
         public GameObject cursor;
 
-        CharacterInfo character;
+        public CharacterInfo character { get; set; }
         PathFinder pathFinder;
         TileRangeFinder rangeFinder;
         ArrowTranslator arrowTranslator;
@@ -44,7 +44,7 @@ namespace THJ
                 cursor.transform.position = tile.transform.position;
                 cursor.gameObject.GetComponent<SpriteRenderer>().sortingOrder = tile.transform.GetComponent<SpriteRenderer>().sortingOrder;
 
-                if (rangeFinderTiles.Contains(tile) && !gameInfo.isMoving)
+                if (rangeFinderTiles.Contains(tile) && !gameInfo.isMoving && gameInfo.MovementRange > 0)
                 {
                     path = pathFinder.FindPath(character.standingOnTile, tile, rangeFinderTiles);
 
@@ -63,21 +63,12 @@ namespace THJ
                     }
                 }
 
-                if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0) && tile != null && tile.canMoveTo)
                 {
                     tile.ShowTile();
 
-                    if (character == null)
-                    {
-                        character = Instantiate(gameInfo.characterPrefab).GetComponent<CharacterInfo>();
-                        PositionCharacterOnLine(tile);
-                        GetInRangeTiles();
-                    }
-                    else
-                    {
-                        gameInfo.isMoving = true;
-                        tile.gameObject.GetComponent<OverlayTile>().HideTile();
-                    }
+                    gameInfo.isMoving = true;
+                    tile.gameObject.GetComponent<OverlayTile>().HideTile();
                 }
             }
 
@@ -85,6 +76,11 @@ namespace THJ
             {
                 MoveAlongPath();
             }
+        }
+
+        public void ActivePath()
+        {
+            GetInRangeTiles();
         }
 
         private void MoveAlongPath()
@@ -103,18 +99,29 @@ namespace THJ
             if (Vector2.Distance(character.transform.position, path[0].transform.position) < 0.00001f)
             {
                 PositionCharacterOnLine(path[0]);
+                int currentMove = gameInfo.MovementRange - path.Count;
+                if (currentMove <= 0) currentMove = 0;
+                gameInfo.SetMovementRange(currentMove);
                 path.RemoveAt(0);
             }
 
             if (path.Count == 0)
             {
-                GetInRangeTiles();
+                if (gameInfo.MovementRange != 0)
+                {
+                    gameInfo.canRollDice = false;
+                    GetInRangeTiles();
+                }
+                else if (gameInfo.MovementRange == 0)
+                {
+                    gameInfo.canRollDice = true;
+                }
+
                 gameInfo.isMoving = false;
             }
-
         }
 
-        private void PositionCharacterOnLine(OverlayTile tile)
+        public void PositionCharacterOnLine(OverlayTile tile)
         {
             character.transform.position = new Vector3(tile.transform.position.x, tile.transform.position.y + 0.0001f, tile.transform.position.z);
             character.GetComponent<SpriteRenderer>().sortingOrder = tile.GetComponent<SpriteRenderer>().sortingOrder;
@@ -136,7 +143,7 @@ namespace THJ
             return null;
         }
 
-        private void GetInRangeTiles()
+        public void GetInRangeTiles()
         {
             rangeFinderTiles = rangeFinder.GetTilesInRange(new Vector2Int(character.standingOnTile.gridLocation.x, character.standingOnTile.gridLocation.y), gameInfo.MovementRange);
 
