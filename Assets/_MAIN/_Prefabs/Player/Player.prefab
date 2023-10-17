@@ -80,9 +80,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingLayerID: 1472612365
+  m_SortingLayer: 2
+  m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8008077148026782910
 MonoBehaviour:
@@ -121,7 +121,7 @@ MonoBehaviour:
   disableRenderingOnOverride: 1
   updateTiming: 1
   unscaledTime: 0
-  _animationName: walk
+  _animationName: idle
   loop: 1
   timeScale: 1
 --- !u!1 &5850204406844604886
@@ -197,11 +197,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1657856223
-  m_SortingLayer: 1
+  m_SortingLayerID: 1472612365
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 759680d51bc1fab4b823741e23637e11, type: 3}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -224,6 +224,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   standingOnTile: {fileID: 0}
+  playerFront: {fileID: 8680294409547312156}
+  frontIdleAnimation: idle
+  frontWalkAnimation: walk
+  frontInteractAnimation: interacted
+  playerBack: {fileID: 1226083224115821310}
+  backIdleAnimation: idle
+  backWalkAnimation: walk
+  backInteractAnimation: interacted
 --- !u!1 &8680294409547312156
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,8 +312,8 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1657856223
-  m_SortingLayer: 1
+  m_SortingLayerID: 1472612365
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &3043639839611633033
@@ -345,6 +353,6 @@ MonoBehaviour:
   disableRenderingOnOverride: 1
   updateTiming: 1
   unscaledTime: 0
-  _animationName: walk
+  _animationName: idle
   loop: 1
   timeScale: 1

@@ -41,10 +41,10 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Object
+  - name: OverlayTile
     uniqueID: 1657856223
     locked: 0
-  - name: OverlayTile
+  - name: Object
     uniqueID: 1472612365
     locked: 0
   - name: UI

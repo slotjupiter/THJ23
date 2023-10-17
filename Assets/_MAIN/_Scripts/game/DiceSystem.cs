@@ -13,7 +13,7 @@ namespace THJ
 
         public Button diceButton;
         public GameObject diceRollPanel;
-        public TMP_Text diceRollText;
+        public GameObject normalDiceImage;
 
         private void Awake()
         {
@@ -42,14 +42,13 @@ namespace THJ
         {
             diceRollPanel.SetActive(true);
             int randomNumber = Random.Range(1, 6);
-            diceRollText.text = randomNumber.ToString();
             gameInfo?.SetDiceValue(randomNumber);
             gameInfo.SetMovementRange(gameInfo.CurrentDiceValue);
-
-            yield return new WaitForSeconds(1f);
-
+            normalDiceImage.GetComponent<Animator>().SetInteger("RollValue", gameInfo.CurrentDiceValue);
+            yield return new WaitUntil(() => normalDiceImage.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !normalDiceImage.GetComponent<Animator>().IsInTransition(0));
             //Active path depends on values.
             gameInfo.tileCursorSystem.ActivePath();
+            normalDiceImage.GetComponent<Animator>().SetInteger("RollValue", 0);
             diceRollPanel.SetActive(false);
         }
     }

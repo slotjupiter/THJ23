@@ -33,40 +33,51 @@ public class MapManager : MonoBehaviour
         //Create overlay tiles and put to parent.
         if (mainTilemap)
         {
-            map = new Dictionary<Vector2Int, OverlayTile>();
-            BoundsInt bounds = mainTilemap.cellBounds;
+            CreateOverlayTiles();
+            CreatePlayer();
+        }
+    }
 
-            // for (int z = bounds.min.z; z > bounds.min.z; z--)
-            // {
-            int z = 0;
-            for (int y = bounds.min.y; y < bounds.max.y; y++)
+    private void CreateOverlayTiles()
+    {
+        map = new Dictionary<Vector2Int, OverlayTile>();
+        BoundsInt bounds = mainTilemap.cellBounds;
+
+        // for (int z = bounds.min.z; z > bounds.min.z; z--)
+        // {
+        int z = 0;
+        for (int y = bounds.min.y; y < bounds.max.y; y++)
+        {
+            for (int x = bounds.min.x; x < bounds.max.x; x++)
             {
-                for (int x = bounds.min.x; x < bounds.max.x; x++)
+                var tileLocation = new Vector3Int(x, y, z);
+                var tileKey = new Vector2Int(x, y);
+                if (mainTilemap.HasTile(tileLocation) && !map.ContainsKey(tileKey))
                 {
-                    var tileLocation = new Vector3Int(x, y, z);
-                    var tileKey = new Vector2Int(x, y);
-                    if (mainTilemap.HasTile(tileLocation) && !map.ContainsKey(tileKey))
-                    {
-                        var overlayTile = Instantiate(overlayTilePrefab, overlayContainer.transform);
-                        var cellWorldPosition = mainTilemap.GetCellCenterWorld(new Vector3Int(x, y, z));
-                        overlayTile.transform.position = new Vector3(cellWorldPosition.x, cellWorldPosition.y, cellWorldPosition.z + 1);
-                        overlayTile.GetComponent<SpriteRenderer>().sortingOrder = mainTilemap.GetComponent<TilemapRenderer>().sortingOrder;
-                        overlayTile.gameObject.GetComponent<OverlayTile>().gridLocation = new Vector3Int(x, y, z);
+                    var overlayTile = Instantiate(overlayTilePrefab, overlayContainer.transform);
+                    var cellWorldPosition = mainTilemap.GetCellCenterWorld(new Vector3Int(x, y, z));
+                    overlayTile.transform.position = new Vector3(cellWorldPosition.x, cellWorldPosition.y, cellWorldPosition.z + 1);
+                    overlayTile.GetComponent<SpriteRenderer>().sortingOrder = mainTilemap.GetComponent<TilemapRenderer>().sortingOrder;
+                    overlayTile.gameObject.GetComponent<OverlayTile>().gridLocation = new Vector3Int(x, y, z);
 
-                        map.Add(new Vector2Int(x, y), overlayTile.gameObject.GetComponent<OverlayTile>());
-                    }
+                    map.Add(new Vector2Int(x, y), overlayTile.gameObject.GetComponent<OverlayTile>());
                 }
             }
+        }
+        // }
+    }
 
-            if (gameInfo.tileCursorSystem.character == null)
-            {
-                Random rand = new Random();
-                OverlayTile randomTile = map.ElementAt(rand.Next(0, map.Count)).Value;
-                gameInfo.tileCursorSystem.character = Instantiate(gameInfo.characterPrefab).GetComponent<THJ.CharacterInfo>();
-                gameInfo.tileCursorSystem.PositionCharacterOnLine(randomTile);
-                // gameInfo.tileCursorSystem.GetInRangeTiles();
-            }
-            // }
+    private void CreatePlayer()
+    {
+        //CreateCharacter
+        if (gameInfo.tileCursorSystem.character == null)
+        {
+            Random rand = new Random();
+            OverlayTile randomTile = map.ElementAt(rand.Next(0, map.Count)).Value;
+            gameInfo.tileCursorSystem.character = Instantiate(gameInfo.characterPrefab).GetComponent<THJ.CharacterInfo>();
+            gameInfo.tileCursorSystem.PositionCharacterOnLine(randomTile);
+            gameInfo.tileCursorSystem.currentGridPoint = randomTile.grid2DLocation;
+            // gameInfo.tileCursorSystem.GetInRangeTiles();
         }
     }
 

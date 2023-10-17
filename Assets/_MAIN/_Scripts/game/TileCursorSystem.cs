@@ -19,6 +19,9 @@ namespace THJ
         List<OverlayTile> path;
         List<OverlayTile> rangeFinderTiles;
 
+        public Vector2Int currentGridPoint { get; set; }
+        public Vector2Int nextGridPoint { get; set; }
+
         private void Awake()
         {
             if (!gameInfo) gameInfo = FindObjectOfType<GameInfo>();
@@ -34,7 +37,7 @@ namespace THJ
             rangeFinderTiles = new List<OverlayTile>();
         }
 
-        void LateUpdate()
+        void Update()
         {
             RaycastHit2D? hit = GetFocusedOnTile();
 
@@ -92,6 +95,8 @@ namespace THJ
                 MapManager.Instance.map[item.grid2DLocation].SetSprite(ArrowDirection.None);
             }
 
+            if (path[0]) nextGridPoint = path[0].grid2DLocation;
+            character.MoveAnimation(currentGridPoint, nextGridPoint, true);
             float zIndex = path[0].transform.position.z;
             character.transform.position = Vector2.MoveTowards(character.transform.position, path[0].transform.position, step);
             character.transform.position = new Vector3(character.transform.position.x, character.transform.position.y, zIndex);
@@ -99,6 +104,7 @@ namespace THJ
             if (Vector2.Distance(character.transform.position, path[0].transform.position) < 0.00001f)
             {
                 PositionCharacterOnLine(path[0]);
+                currentGridPoint = path[0].grid2DLocation;
                 int currentMove = gameInfo.MovementRange - path.Count;
                 if (currentMove <= 0) currentMove = 0;
                 gameInfo.SetMovementRange(currentMove);
@@ -107,6 +113,7 @@ namespace THJ
 
             if (path.Count == 0)
             {
+                character.MoveAnimation(currentGridPoint, nextGridPoint, false);
                 if (gameInfo.MovementRange != 0)
                 {
                     gameInfo.canRollDice = false;
@@ -114,6 +121,7 @@ namespace THJ
                 }
                 else if (gameInfo.MovementRange == 0)
                 {
+                    nextGridPoint = Vector2Int.zero;
                     gameInfo.canRollDice = true;
                 }
 
