@@ -1,0 +1,15 @@
+heart.png
+size:2048,2048
+filter:Linear,Linear
+pma:true
+base
+bounds:2,644,1237,1299
+offsets:30,11,1267,1310
+eye_a
+bounds:2,2,107,109
+offsets:15,15,125,135
+eye_c
+bounds:1241,1836,122,107
+offsets:0,9,122,116
+heart
+bounds:2,113,569,529
