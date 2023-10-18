@@ -13,7 +13,8 @@ namespace THJ
 
         public Button diceButton;
         public GameObject diceRollPanel;
-        public GameObject normalDiceImage;
+        public GameObject NormalDiceObject;
+        GameObject currentDiceType;
 
         private void Awake()
         {
@@ -24,32 +25,52 @@ namespace THJ
         private void Start()
         {
             if (diceButton)
-            {
                 diceButton.onClick.AddListener(RollDice);
-            }
         }
 
         private void RollDice()
         {
             if (gameInfo.canRollDice)
             {
+                diceButton.transform.DOShakeScale(0.15f, 1, 6, 0, true, ShakeRandomnessMode.Harmonic);
+                gameInfo.movingPhase = true;
                 gameInfo.canRollDice = false;
-                StartCoroutine(StartRoll());
+                StartCoroutine(StartRoll(DiceType.NormalType));
             }
         }
 
-        IEnumerator StartRoll()
+        IEnumerator StartRoll(DiceType diceType)
         {
+            switch (diceType)
+            {
+                case DiceType.NormalType:
+                    currentDiceType = NormalDiceObject;
+                    break;
+                case DiceType.MeatType:
+                    //*Meat type
+                    break;
+            }
+
             diceRollPanel.SetActive(true);
+            //*Random Num
             int randomNumber = Random.Range(1, 6);
             gameInfo?.SetDiceValue(randomNumber);
             gameInfo.SetMovementRange(gameInfo.CurrentDiceValue);
-            normalDiceImage.GetComponent<Animator>().SetInteger("RollValue", gameInfo.CurrentDiceValue);
-            yield return new WaitUntil(() => normalDiceImage.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !normalDiceImage.GetComponent<Animator>().IsInTransition(0));
-            //Active path depends on values.
+            //*Set Sprite
+            currentDiceType.GetComponent<Animator>().SetInteger("RollValue", gameInfo.CurrentDiceValue);
+
+            yield return new WaitUntil(() => currentDiceType.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !currentDiceType.GetComponent<Animator>().IsInTransition(0));
+            yield return new WaitForSeconds(0.35f);
+
+            //*Active path depends on values.
             gameInfo.tileCursorSystem.ActivePath();
-            normalDiceImage.GetComponent<Animator>().SetInteger("RollValue", 0);
+            currentDiceType.GetComponent<Animator>().SetInteger("RollValue", 0);
             diceRollPanel.SetActive(false);
+        }
+
+        public enum DiceType
+        {
+            NormalType, MeatType
         }
     }
 

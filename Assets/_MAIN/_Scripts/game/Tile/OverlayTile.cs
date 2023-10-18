@@ -12,6 +12,10 @@ namespace THJ
         [ReadOnly] public int distanceFromStart;
         [ReadOnly] public int distanceFromEnd;
         public int sumDistance { get { return distanceFromStart + distanceFromEnd; } }
+
+        public bool nearestFurniture { get; set; } = false;
+        public int standLayerOrder { get; set; } = 2;
+
         public bool canMoveTo = false;
         public bool isBlocked = false;
 
@@ -28,9 +32,12 @@ namespace THJ
         private void Start()
         {
             gameInfo = FindObjectOfType<GameInfo>();
+
+            nearestFurniture = false;
+
+            if (gameObject.GetComponent<SpriteRenderer>()) spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+
             hideColor = new(0, 0, 0, 0);
-            if (gameObject.GetComponent<SpriteRenderer>())
-                spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
             defaultColor = gameObject.GetComponent<SpriteRenderer>().color;
             showColor = new(defaultColor.r, defaultColor.g, defaultColor.b, 1f);
         }
@@ -40,13 +47,17 @@ namespace THJ
             if (gameInfo.isMoving)
             {
                 HideTile();
+                SetSprite(ArrowDirection.None);
             }
         }
 
         public void ShowTile()
         {
-            canMoveTo = true;
-            spriteRenderer.color = showColor;
+            if (!isBlocked && gameInfo.tileCursorSystem.currentGridPoint != grid2DLocation)
+            {
+                canMoveTo = true;
+                spriteRenderer.color = showColor;
+            }
         }
 
         public void HideTile()
@@ -63,7 +74,7 @@ namespace THJ
             {
                 GetComponentsInChildren<SpriteRenderer>()[1].color = new Color(1, 1, 1, 1);
                 GetComponentsInChildren<SpriteRenderer>()[1].sprite = arrows[(int)d];
-                // GetComponentsInChildren<SpriteRenderer>()[1].sortingOrder = gameObject.GetComponent<SpriteRenderer>().sortingOrder;
+                GetComponentsInChildren<SpriteRenderer>()[1].sortingOrder = gameObject.GetComponent<SpriteRenderer>().sortingOrder;
             }
         }
     }

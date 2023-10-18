@@ -16,7 +16,7 @@ public class MapManager : MonoBehaviour
     public GameObject overlayTilePrefab;
     public GameObject overlayContainer;
     public Dictionary<Vector2Int, OverlayTile> map;
-    public OverlayTile spawnPoint;
+    public GameObject interactButton;
 
     private void Awake()
     {
@@ -52,6 +52,8 @@ public class MapManager : MonoBehaviour
             {
                 var tileLocation = new Vector3Int(x, y, z);
                 var tileKey = new Vector2Int(x, y);
+                var tileType = mainTilemap.GetTile(tileLocation);
+
                 if (mainTilemap.HasTile(tileLocation) && !map.ContainsKey(tileKey))
                 {
                     var overlayTile = Instantiate(overlayTilePrefab, overlayContainer.transform);
@@ -61,10 +63,26 @@ public class MapManager : MonoBehaviour
                     overlayTile.gameObject.GetComponent<OverlayTile>().gridLocation = new Vector3Int(x, y, z);
 
                     map.Add(new Vector2Int(x, y), overlayTile.gameObject.GetComponent<OverlayTile>());
+
+                    if (tileType.name == "FurnitureRightDir" || tileType.name == "FurnitureLeftDir")
+                        overlayTile.GetComponent<OverlayTile>().isBlocked = true;
                 }
             }
         }
         // }
+    }
+
+    private void InitFurnitureTileOrder(string _tileName)
+    {
+        switch (_tileName)
+        {
+            case "FurnitureRightDir":
+
+                break;
+            case "FurnitureLeftDir":
+
+                break;
+        }
     }
 
     private void CreatePlayer()
@@ -74,18 +92,22 @@ public class MapManager : MonoBehaviour
         {
             Random rand = new Random();
             OverlayTile randomTile = map.ElementAt(rand.Next(0, map.Count)).Value;
-            gameInfo.tileCursorSystem.character = Instantiate(gameInfo.characterPrefab).GetComponent<THJ.CharacterInfo>();
-            gameInfo.tileCursorSystem.PositionCharacterOnLine(randomTile);
-            gameInfo.tileCursorSystem.currentGridPoint = randomTile.grid2DLocation;
-            // gameInfo.tileCursorSystem.GetInRangeTiles();
+            if (!randomTile.isBlocked)
+            {
+                gameInfo.tileCursorSystem.character = Instantiate(gameInfo.characterPrefab).GetComponent<THJ.CharacterInfo>();
+                gameInfo.tileCursorSystem.PositionCharacterOnLine(randomTile);
+                gameInfo.tileCursorSystem.currentGridPoint = randomTile.grid2DLocation;
+            }
+            else
+            {
+                CreatePlayer();
+            }
         }
     }
 
     public List<OverlayTile> GetSurroundingTiles(Vector2Int originTile)
     {
         var surroundingTiles = new List<OverlayTile>();
-
-
         Vector2Int TileToCheck = new Vector2Int(originTile.x + 1, originTile.y);
         if (map.ContainsKey(TileToCheck))
         {

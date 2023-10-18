@@ -41,13 +41,14 @@ namespace THJ
         {
             RaycastHit2D? hit = GetFocusedOnTile();
 
-            if (hit.HasValue)
+            if (hit.HasValue && hit.Value.collider.tag != "Furniture")
             {
                 OverlayTile tile = hit.Value.collider.gameObject.GetComponent<OverlayTile>();
+                if (tile == null) return;
                 cursor.transform.position = tile.transform.position;
                 cursor.gameObject.GetComponent<SpriteRenderer>().sortingOrder = tile.transform.GetComponent<SpriteRenderer>().sortingOrder;
 
-                if (rangeFinderTiles.Contains(tile) && !gameInfo.isMoving && gameInfo.MovementRange > 0)
+                if (rangeFinderTiles.Contains(tile) && !gameInfo.isMoving && gameInfo.MovementRange > 0 && gameInfo.movingPhase)
                 {
                     path = pathFinder.FindPath(character.standingOnTile, tile, rangeFinderTiles);
 
@@ -62,7 +63,7 @@ namespace THJ
                         var futureTile = i < path.Count - 1 ? path[i + 1] : null;
 
                         var arrow = arrowTranslator.TranslateDirection(previousTile, path[i], futureTile);
-                        path[i].SetSprite(arrow);
+                        if (path[i].canMoveTo) path[i].SetSprite(arrow);
                     }
                 }
 
@@ -122,6 +123,7 @@ namespace THJ
                 else if (gameInfo.MovementRange == 0)
                 {
                     nextGridPoint = Vector2Int.zero;
+                    gameInfo.movingPhase = false;
                     gameInfo.canRollDice = true;
                 }
 

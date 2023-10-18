@@ -13,6 +13,7 @@ namespace THJ
 
         [TabGroup("Info")] public float MoveSpeed = 3f;
         [TabGroup("Info"), ShowInInspector, ReadOnly] public bool isMoving { get; set; }
+        [TabGroup("Info"), ShowInInspector, ReadOnly] public bool movingPhase { get; set; }
         [TabGroup("Info"), ShowInInspector, ReadOnly] public bool canRollDice { get; set; }
 
         [TabGroup("GameStatus"), ShowInInspector, ReadOnly] public bool gameStart { get; set; }
@@ -21,16 +22,19 @@ namespace THJ
         public GameObject characterPrefab;
 
         public TileCursorSystem tileCursorSystem { get; set; }
+        public MapManager mapManager { get; set; }
 
         private void Awake()
         {
             gameStart = false;
             tileCursorSystem = FindObjectOfType<TileCursorSystem>();
+            mapManager = FindObjectOfType<MapManager>();
         }
 
         private void Start()
         {
             isMoving = false;
+            movingPhase = false;
             canRollDice = true;
         }
 

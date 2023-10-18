@@ -23,6 +23,7 @@ namespace THJ
             Idle, Move, Interact
         }
 
+        [TabGroup("Layer")] public int defaultOrder;
         [TabGroup("Front")] public GameObject playerFront;
         [TabGroup("Front"), SpineAnimation] public string frontIdleAnimation;
         [TabGroup("Front"), SpineAnimation] public string frontWalkAnimation;
@@ -43,52 +44,64 @@ namespace THJ
             frontState = frontAnimation.AnimationState;
             backAnimation = playerBack.gameObject.GetComponent<SkeletonAnimation>();
             backState = backAnimation.AnimationState;
+
+            SetSortingOrder(defaultOrder);
+        }
+
+        public void SetSortingOrder(int _order)
+        {
+            playerFront.gameObject.GetComponent<MeshRenderer>().sortingOrder = _order;
+            playerBack.gameObject.GetComponent<MeshRenderer>().sortingOrder = _order;
         }
 
         public void MoveAnimation(Vector2Int from, Vector2Int to, bool moving)
         {
             Vector2Int direction = new Vector2Int(to.x - from.x, to.y - from.y);
 
-            if (direction == new Vector2Int(1, 0))
+            if (moving)
             {
-                // Back animation
-                if (currentCharacterState != CurrentCharacterState.Move && moving)
+                if (direction == new Vector2Int(1, 0))
                 {
-                    currentCharacterDirection = CurrentCharacterDirection.Back;
-                    currentCharacterState = CurrentCharacterState.Move;
-                    MoveBack();
+                    // Back animation
+                    if (currentCharacterDirection != CurrentCharacterDirection.Back || currentCharacterState != CurrentCharacterState.Move)
+                    {
+                        currentCharacterState = CurrentCharacterState.Move;
+                        currentCharacterDirection = CurrentCharacterDirection.Back;
+                        MoveBack();
+                    }
+                }
+                else if (direction == new Vector2Int(-1, 0))
+                {
+                    // Forward animation
+                    if (currentCharacterDirection != CurrentCharacterDirection.Forward || currentCharacterState != CurrentCharacterState.Move)
+                    {
+                        currentCharacterDirection = CurrentCharacterDirection.Forward;
+                        currentCharacterState = CurrentCharacterState.Move;
+                        MoveForward();
+                    }
+                }
+                else if (direction == new Vector2Int(0, 1))
+                {
+                    // Left animation
+                    if (currentCharacterDirection != CurrentCharacterDirection.Left || currentCharacterState != CurrentCharacterState.Move)
+                    {
+                        currentCharacterState = CurrentCharacterState.Move;
+                        currentCharacterDirection = CurrentCharacterDirection.Left;
+                        MoveLeft();
+                    }
+                }
+                else if (direction == new Vector2Int(0, -1))
+                {
+                    // Right animation
+                    if (currentCharacterDirection != CurrentCharacterDirection.Right || currentCharacterState != CurrentCharacterState.Move)
+                    {
+                        currentCharacterState = CurrentCharacterState.Move;
+                        currentCharacterDirection = CurrentCharacterDirection.Right;
+                        MoveRight();
+                    }
                 }
             }
-            else if (direction == new Vector2Int(-1, 0))
-            {
-                // Forward animation
-                if (currentCharacterState != CurrentCharacterState.Move && moving)
-                {
-                    currentCharacterDirection = CurrentCharacterDirection.Forward;
-                    currentCharacterState = CurrentCharacterState.Move;
-                    MoveForward();
-                }
-            }
-            else if (direction == new Vector2Int(0, 1))
-            {
-                // Left animation
-                if (currentCharacterState != CurrentCharacterState.Move && moving)
-                {
-                    currentCharacterDirection = CurrentCharacterDirection.Left;
-                    currentCharacterState = CurrentCharacterState.Move;
-                    MoveLeft();
-                }
-            }
-            else if (direction == new Vector2Int(0, -1))
-            {
-                // Right animation
-                if (currentCharacterState != CurrentCharacterState.Move && moving)
-                {
-                    currentCharacterDirection = CurrentCharacterDirection.Right;
-                    currentCharacterState = CurrentCharacterState.Move;
-                    MoveRight();
-                }
-            }
+
             else if (!moving)
             {
                 if (currentCharacterState != CurrentCharacterState.Idle)
@@ -117,7 +130,7 @@ namespace THJ
 
         //* Forward
 
-        public void IdleForward()
+        private void IdleForward()
         {
             if (!playerFront.activeSelf)
                 playerFront.SetActive(true);
@@ -127,7 +140,7 @@ namespace THJ
             frontState.SetAnimation(0, frontIdleAnimation, true);
         }
 
-        public void MoveForward()
+        private void MoveForward()
         {
             if (!playerFront.activeSelf)
                 playerFront.SetActive(true);
@@ -150,7 +163,7 @@ namespace THJ
 
         //* Right
 
-        public void IdleRight()
+        private void IdleRight()
         {
             if (!playerFront.activeSelf)
                 playerFront.SetActive(true);
@@ -159,7 +172,7 @@ namespace THJ
             frontAnimation.skeleton.ScaleX = -1;
             frontState.SetAnimation(0, frontIdleAnimation, true);
         }
-        public void MoveRight()
+        private void MoveRight()
         {
             if (!playerFront.activeSelf)
                 playerFront.SetActive(true);
@@ -181,7 +194,7 @@ namespace THJ
         }
 
         //* Left
-        public void IdleLeft()
+        private void IdleLeft()
         {
             if (!playerBack.activeSelf)
                 playerBack.SetActive(true);
@@ -190,7 +203,7 @@ namespace THJ
             backAnimation.skeleton.ScaleX = -1;
             backState.SetAnimation(0, backIdleAnimation, true);
         }
-        public void MoveLeft()
+        private void MoveLeft()
         {
             if (!playerBack.activeSelf)
                 playerBack.SetActive(true);
@@ -212,7 +225,7 @@ namespace THJ
         }
 
         //* Back
-        public void IdleBack()
+        private void IdleBack()
         {
             if (!playerBack.activeSelf)
                 playerBack.SetActive(true);
@@ -221,7 +234,7 @@ namespace THJ
             backAnimation.skeleton.ScaleX = 1;
             backState.SetAnimation(0, backIdleAnimation, true);
         }
-        public void MoveBack()
+        private void MoveBack()
         {
             if (!playerBack.activeSelf)
                 playerBack.SetActive(true);

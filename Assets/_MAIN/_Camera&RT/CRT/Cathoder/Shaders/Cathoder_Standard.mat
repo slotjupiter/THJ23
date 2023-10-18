@@ -16,7 +16,6 @@ Material:
   - _DISPLAY_COLOR
   - _LCD_ON
   - _OVERSCAN_ON
-  - _PIP_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -51,7 +50,7 @@ Material:
     - _ColorBleed: 1
     - _Composite: 1
     - _Display: 0
-    - _Height: 194
+    - _Height: 294
     - _Intensity: 2.75
     - _Lcd: 1
     - _Overlay: 0
@@ -59,7 +58,7 @@ Material:
     - _Overscan: 1
     - _OverscanX: 0
     - _OverscanY: 0
-    - _PiP: 1
+    - _PiP: 0
     - _PiPAlpha: 0.05
     - _SourceRes: 0
     - _Width: 678
