@@ -1,7 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +12,9 @@ namespace THJ
         public Button diceButton;
         public GameObject diceRollPanel;
         public GameObject NormalDiceObject;
+        public bool OnRollingDice { get; private set; } = false;
         GameObject currentDiceType;
+        public int diceCount { get; private set; } = 0;
 
         private void Awake()
         {
@@ -32,6 +32,9 @@ namespace THJ
         {
             if (gameInfo.canRollDice)
             {
+                gameInfo.UpdateSanityText(2f + (gameInfo.collectKeys * 2f));
+                diceCount++;
+                OnRollingDice = true;
                 diceButton.transform.DOShakeScale(0.15f, 1, 6, 0, true, ShakeRandomnessMode.Harmonic);
                 gameInfo.movingPhase = true;
                 gameInfo.canRollDice = false;
@@ -58,7 +61,7 @@ namespace THJ
             gameInfo.SetMovementRange(gameInfo.CurrentDiceValue);
             //*Set Sprite
             currentDiceType.GetComponent<Animator>().SetInteger("RollValue", gameInfo.CurrentDiceValue);
-
+            AudioController.Instance.PlayFX("DiceRolling");
             yield return new WaitUntil(() => currentDiceType.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !currentDiceType.GetComponent<Animator>().IsInTransition(0));
             yield return new WaitForSeconds(0.35f);
 
@@ -66,6 +69,7 @@ namespace THJ
             gameInfo.tileCursorSystem.ActivePath();
             currentDiceType.GetComponent<Animator>().SetInteger("RollValue", 0);
             diceRollPanel.SetActive(false);
+            OnRollingDice = false;
         }
 
         public enum DiceType

@@ -44,11 +44,13 @@ namespace THJ
             if (hit.HasValue && hit.Value.collider.tag != "Furniture")
             {
                 OverlayTile tile = hit.Value.collider.gameObject.GetComponent<OverlayTile>();
-                if (tile == null) return;
-                cursor.transform.position = tile.transform.position;
-                cursor.gameObject.GetComponent<SpriteRenderer>().sortingOrder = tile.transform.GetComponent<SpriteRenderer>().sortingOrder;
+                if (tile != null && !gameInfo.isMoving)
+                {
+                    cursor.transform.position = tile.transform.position;
+                    cursor.gameObject.GetComponent<SpriteRenderer>().sortingOrder = tile.transform.GetComponent<SpriteRenderer>().sortingOrder;
+                }
 
-                if (rangeFinderTiles.Contains(tile) && !gameInfo.isMoving && gameInfo.MovementRange > 0 && gameInfo.movingPhase)
+                if (rangeFinderTiles.Contains(tile) && !gameInfo.isMoving && gameInfo.MovementRange > 0 && !gameInfo.diceSystem.OnRollingDice)
                 {
                     path = pathFinder.FindPath(character.standingOnTile, tile, rangeFinderTiles);
 
@@ -63,7 +65,7 @@ namespace THJ
                         var futureTile = i < path.Count - 1 ? path[i + 1] : null;
 
                         var arrow = arrowTranslator.TranslateDirection(previousTile, path[i], futureTile);
-                        if (path[i].canMoveTo) path[i].SetSprite(arrow);
+                        path[i].SetSprite(arrow);
                     }
                 }
 
@@ -87,6 +89,8 @@ namespace THJ
             GetInRangeTiles();
         }
 
+        int currentMove;
+        bool doMoveProcess = false;
         private void MoveAlongPath()
         {
             var step = gameInfo.MoveSpeed * Time.deltaTime;
@@ -97,6 +101,9 @@ namespace THJ
             }
 
             if (path[0]) nextGridPoint = path[0].grid2DLocation;
+            if (path[0] && path[0].nearestFurniture) character.SetSortingOrder(path[0].standLayerOrder);
+            else character.SetSortingOrder(2);
+
             character.MoveAnimation(currentGridPoint, nextGridPoint, true);
             float zIndex = path[0].transform.position.z;
             character.transform.position = Vector2.MoveTowards(character.transform.position, path[0].transform.position, step);
@@ -104,11 +111,17 @@ namespace THJ
 
             if (Vector2.Distance(character.transform.position, path[0].transform.position) < 0.00001f)
             {
+                AudioController.Instance.PlayFX("Walk");
                 PositionCharacterOnLine(path[0]);
                 currentGridPoint = path[0].grid2DLocation;
-                int currentMove = gameInfo.MovementRange - path.Count;
-                if (currentMove <= 0) currentMove = 0;
-                gameInfo.SetMovementRange(currentMove);
+                if (!doMoveProcess)
+                {
+                    doMoveProcess = true;
+                    currentMove = gameInfo.MovementRange - path.Count;
+                    if (currentMove <= 0) currentMove = 0;
+                    gameInfo.SetMovementRange(currentMove);
+                }
+
                 path.RemoveAt(0);
             }
 
@@ -117,11 +130,13 @@ namespace THJ
                 character.MoveAnimation(currentGridPoint, nextGridPoint, false);
                 if (gameInfo.MovementRange != 0)
                 {
+                    doMoveProcess = false;
                     gameInfo.canRollDice = false;
                     GetInRangeTiles();
                 }
                 else if (gameInfo.MovementRange == 0)
                 {
+                    doMoveProcess = false;
                     nextGridPoint = Vector2Int.zero;
                     gameInfo.movingPhase = false;
                     gameInfo.canRollDice = true;

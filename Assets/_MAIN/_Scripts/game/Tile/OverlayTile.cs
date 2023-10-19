@@ -13,8 +13,8 @@ namespace THJ
         [ReadOnly] public int distanceFromEnd;
         public int sumDistance { get { return distanceFromStart + distanceFromEnd; } }
 
-        public bool nearestFurniture { get; set; } = false;
         public int standLayerOrder { get; set; } = 2;
+        public bool nearestFurniture { get; set; } = false;
 
         public bool canMoveTo = false;
         public bool isBlocked = false;
@@ -32,8 +32,6 @@ namespace THJ
         private void Start()
         {
             gameInfo = FindObjectOfType<GameInfo>();
-
-            nearestFurniture = false;
 
             if (gameObject.GetComponent<SpriteRenderer>()) spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
 
@@ -74,7 +72,7 @@ namespace THJ
             {
                 GetComponentsInChildren<SpriteRenderer>()[1].color = new Color(1, 1, 1, 1);
                 GetComponentsInChildren<SpriteRenderer>()[1].sprite = arrows[(int)d];
-                GetComponentsInChildren<SpriteRenderer>()[1].sortingOrder = gameObject.GetComponent<SpriteRenderer>().sortingOrder;
+                // GetComponentsInChildren<SpriteRenderer>()[1].sortingOrder = gameObject.GetComponent<SpriteRenderer>().sortingOrder;
             }
         }
     }

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1098b225859f894b8eb6080cb088723, type: 3}
+  m_Name: CabinetD
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  furnitureName: CabinetD
+  furnitureType: 0
+  searchFurnitureType: 4
+  defaultSprite: {fileID: 21300000, guid: 6f8c80731e8b57b4eba3fbab2be34f91, type: 3}
+  finishedSprite: {fileID: 0}
+  openSprite:
+  - {fileID: 21300000, guid: 7c7674a9239b7314993e034514835941, type: 3}

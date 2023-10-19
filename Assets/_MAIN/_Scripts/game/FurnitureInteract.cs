@@ -1,102 +1,158 @@
-using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using THJ;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FurnitureInteract : MonoBehaviour
+namespace THJ
 {
-    [TabGroup("Furniture Setup")] public FurnitureSO furnitureSO;
-    [TabGroup("Furniture Setup")] public Transform interactBtnPos;
-    string currentFaceDirection;
-
-    GameInfo gameInfo;
-    GameObject _interactBtn;
-    bool playerInFront = false;
-    bool setUpButton = false;
-    int _storageCount;
-
-    private void Start()
+    public class FurnitureInteract : MonoBehaviour
     {
-        Initialized();
-    }
+        [TabGroup("Furniture Setup")] public string InteractSide = "Right";
+        [TabGroup("Furniture Setup")] public SpriteRenderer furnitureImage;
+        [TabGroup("Furniture Setup")] public FurnitureSO furnitureSO;
+        [TabGroup("Furniture Setup")] public Transform interactBtnPos;
+        [TabGroup("Furniture Setup"), ReadOnly] public List<ItemSO> searchItemList;
+        [TabGroup("Furniture Setup")] public int maxStorageCount;
+        int storageCount;
+        public bool isOpen = false;
+        public bool isFullySearch = false;
+        bool _changeToOpenSprite = false;
+        bool canOpen = true;
 
-    public void Initialized()
-    {
-        gameInfo = FindObjectOfType<GameInfo>();
-        _interactBtn = gameInfo.mapManager.interactButton;
+        string currentFaceDirection;
 
-        if (furnitureSO)
-            _storageCount = furnitureSO.storageCount;
+        GameInfo gameInfo;
+        GameObject _interactBtn;
+        bool playerInFront = false;
+        bool setUpButton = false;
 
-        if (gameObject.transform.localScale.x == 1)
-            currentFaceDirection = "Right";
-        else if (gameObject.transform.localScale.x == -1)
-            currentFaceDirection = "Left";
-
-    }
-
-    private void Update()
-    {
-        if (gameInfo.movingPhase && _interactBtn.activeSelf)
+        private void Awake()
         {
-            _interactBtn.SetActive(false);
-        }
-    }
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.tag == "Player" && _interactBtn && !gameInfo.movingPhase)
-        {
-            if (!playerInFront)
-                playerInFront = true;
+            gameInfo = FindObjectOfType<GameInfo>();
 
-            if (!_interactBtn.activeSelf)
-                _interactBtn.SetActive(true);
+            storageCount = maxStorageCount;
+
+            searchItemList = new();
+            isOpen = false;
         }
 
-        if (playerInFront)
+        private void Start()
         {
-            if (!setUpButton)
+            Initialized();
+        }
+
+        public void Initialized()
+        {
+            _interactBtn = gameInfo.mapManager.interactButton;
+
+            if (gameObject.transform.localScale.x == 1 && InteractSide != "Left" || InteractSide == "Right")
+                currentFaceDirection = "Right";
+            else if (gameObject.transform.localScale.x == -1 || InteractSide == "Left")
+                currentFaceDirection = "Left";
+        }
+
+        public void InitItems(ItemSO item)
+        {
+            if (storageCount > 0)
             {
-                setUpButton = true;
-                _interactBtn.transform.position = interactBtnPos.transform.position;
-                _interactBtn.gameObject.GetComponent<Button>().onClick.AddListener(Interact);
+                if (searchItemList.Count == storageCount) return;
+                searchItemList.Add(item);
             }
         }
-    }
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (_interactBtn)
-            if (_interactBtn.activeSelf)
+        private void Update()
+        {
+            if (gameInfo.movingPhase && _interactBtn.activeSelf)
             {
                 _interactBtn.SetActive(false);
             }
 
-        if (playerInFront)
-            playerInFront = false;
-
-        if (!playerInFront)
+            if (isFullySearch && furnitureSO && furnitureImage && !_changeToOpenSprite)
+            {
+                furnitureImage.sprite = furnitureSO.openSprite[0];
+                _changeToOpenSprite = true;
+            }
+        }
+        private void OnTriggerStay2D(Collider2D other)
         {
-            setUpButton = false;
-            _interactBtn.gameObject.GetComponent<Button>().onClick.RemoveListener(Interact);
+            if (other.tag == "Player" && _interactBtn && !gameInfo.movingPhase)
+            {
+                if (!playerInFront)
+                    playerInFront = true;
+
+                if (!_interactBtn.activeSelf)
+                {
+                    _interactBtn.SetActive(true);
+                }
+            }
+
+            if (playerInFront && canOpen)
+            {
+                if (!setUpButton)
+                {
+                    setUpButton = true;
+                    _interactBtn.transform.position = interactBtnPos.transform.position;
+                    _interactBtn.gameObject.GetComponent<Button>().onClick.AddListener(Interact);
+                }
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if (playerInFront)
+            {
+                canOpen = true;
+                playerInFront = false;
+            }
+
+            if (!playerInFront)
+            {
+                setUpButton = false;
+                _interactBtn.gameObject.GetComponent<Button>().onClick.RemoveListener(Interact);
+            }
+
+            if (_interactBtn)
+                if (_interactBtn.activeSelf)
+                {
+                    _interactBtn.SetActive(false);
+                }
+        }
+
+        private void Interact()
+        {
+            canOpen = false;
+            _interactBtn.SetActive(false);
+            switch (currentFaceDirection)
+            {
+                case "Left":
+                    gameInfo.tileCursorSystem.character.InteractBack();
+                    break;
+                case "Right":
+                    gameInfo.tileCursorSystem.character.InteractLeft();
+                    break;
+            }
+
+            switch (furnitureSO.searchFurnitureType)
+            {
+                case FurnitureSO.SearchFurnitureType.Locker:
+                    gameInfo.searchSystem.OpenLocker(searchItemList, this);
+                    break;
+                case FurnitureSO.SearchFurnitureType.Cabinet_A:
+                    gameInfo.searchSystem.OpenCabinetA(searchItemList, this);
+                    break;
+                case FurnitureSO.SearchFurnitureType.Cabinet_B:
+                    gameInfo.searchSystem.OpenCabinetB(searchItemList, this);
+                    break;
+                case FurnitureSO.SearchFurnitureType.Cabinet_C:
+                    gameInfo.searchSystem.OpenCabinetC(searchItemList, this);
+                    break;
+                case FurnitureSO.SearchFurnitureType.Cabinet_D:
+                    gameInfo.searchSystem.OpenCabinetD(searchItemList, this);
+                    break;
+            }
+
         }
     }
 
-    private void Interact()
-    {
-        Debug.Log("CLICK CLICK");
-
-        switch (currentFaceDirection)
-        {
-            case "Left":
-                gameInfo.tileCursorSystem.character.InteractBack();
-                break;
-            case "Right":
-                gameInfo.tileCursorSystem.character.InteractLeft();
-                break;
-        }
-
-    }
 }
+
