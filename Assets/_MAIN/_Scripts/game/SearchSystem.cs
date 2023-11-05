@@ -53,6 +53,7 @@ public class SearchSystem : MonoBehaviour
             currentObjectOpen = null;
         }
 
+        AudioController.Instance.PlayFX("Popup");
         SearchPanelUI.SetActive(false);
     }
 
@@ -78,7 +79,6 @@ public class SearchSystem : MonoBehaviour
     public void OpenCabinetA(List<ItemSO> searchItemList, FurnitureInteract furniture)
     {
         RandomTextHeader();
-
         _cabinetASearch.InitItemsPosition(searchItemList, furniture);
         currentSearch = _cabinetASearch;
         SearchPanelUI.SetActive(true);

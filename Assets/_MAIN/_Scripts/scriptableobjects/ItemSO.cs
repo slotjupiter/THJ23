@@ -13,5 +13,5 @@ public class ItemSO : ScriptableObject
 
 public enum ItemType
 {
-    HeadPart, HandsPart, LegsPart, OrgansPart, Potion, Book, Fuse
+    HeadPart, HandsPart, LegsPart, OrgansPart, Potion, Book, Fuse, None
 }

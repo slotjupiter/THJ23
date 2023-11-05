@@ -11,6 +11,8 @@ namespace THJ
         GameInfo gameInfo;
         [ReadOnly] public int distanceFromStart;
         [ReadOnly] public int distanceFromEnd;
+        public Color extraColor;
+        public Color errorColor;
         public int sumDistance { get { return distanceFromStart + distanceFromEnd; } }
 
         public int standLayerOrder { get; set; } = 2;
@@ -49,12 +51,29 @@ namespace THJ
             }
         }
 
-        public void ShowTile()
+        public void SetTileColor()
+        {
+            spriteRenderer.color = errorColor;
+        }
+
+        public void ShowTile(int mode = 0)
         {
             if (!isBlocked && gameInfo.tileCursorSystem.currentGridPoint != grid2DLocation)
             {
                 canMoveTo = true;
-                spriteRenderer.color = showColor;
+
+                switch (mode)
+                {
+                    case 0:
+                        spriteRenderer.color = showColor;
+                        break;
+                    case 1:
+                        spriteRenderer.color = errorColor;
+                        break;
+                    case 2:
+                        spriteRenderer.color = extraColor;
+                        break;
+                }
             }
         }
 

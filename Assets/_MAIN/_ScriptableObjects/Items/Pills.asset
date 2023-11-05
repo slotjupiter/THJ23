@@ -15,5 +15,5 @@ MonoBehaviour:
   KeyItem: 0
   itemType: 4
   itemSprite: {fileID: 21300000, guid: c93c4f01d0e07624c8b2b0ee85ecae1a, type: 3}
-  itemName: Priest Head
-  itemDescription: Head of Hard Head Priest
+  itemName: Pills
+  itemDescription: Maybe it's will be better on next life.

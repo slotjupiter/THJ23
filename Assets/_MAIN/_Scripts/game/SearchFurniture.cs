@@ -35,7 +35,8 @@ namespace THJ
                                    break;
                            }
                            if (currentFurniture != null) currentFurniture.isOpen = true;
-                           if (itemList.Count == 0 && !currentFurniture.isFullySearch) currentFurniture.isFullySearch = true;
+                           if (itemList.Count == 0 && !currentFurniture.isFullySearch
+                           || !currentFurniture.isFullySearch && currentFurniture.onlyNoneItems) currentFurniture.isFullySearch = true;
                            closeObject.SetActive(false);
                            openObject.SetActive(true);
                        });
@@ -95,7 +96,7 @@ namespace THJ
                         }
                     }
                 }
-                else if (currentFurniture.isOpen && itemList.Count == 0)
+                else if (currentFurniture.isOpen && itemList.Count == 0 || currentFurniture.isOpen && furniture.onlyNoneItems)
                 {
                     currentFurniture.isFullySearch = true;
 

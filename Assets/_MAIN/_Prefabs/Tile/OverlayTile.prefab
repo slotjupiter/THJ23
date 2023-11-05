@@ -185,6 +185,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distanceFromStart: 0
   distanceFromEnd: 0
+  extraColor: {r: 0.8773585, g: 0.38487893, b: 0.38487893, a: 1}
+  errorColor: {r: 1, g: 0.8739431, b: 0.4575472, a: 1}
   canMoveTo: 0
   isBlocked: 0
   Previous: {fileID: 0}

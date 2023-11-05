@@ -16,6 +16,7 @@ namespace THJ
         int storageCount;
         public bool isOpen = false;
         public bool isFullySearch = false;
+        public bool onlyNoneItems { get; set; }
         bool _changeToOpenSprite = false;
         bool canOpen = true;
 
@@ -62,15 +63,21 @@ namespace THJ
 
         private void Update()
         {
-            if (gameInfo.movingPhase && _interactBtn.activeSelf)
+            if (gameInfo.movingPhase && _interactBtn.activeSelf
+            || gameInfo.inventorySystem.openInventory && _interactBtn.activeSelf && playerInFront)
             {
                 _interactBtn.SetActive(false);
+            }
+            else if (!gameInfo.inventorySystem.openInventory && !_interactBtn.activeSelf && playerInFront)
+            {
+                _interactBtn.SetActive(true);
             }
 
             if (isFullySearch && furnitureSO && furnitureImage && !_changeToOpenSprite)
             {
                 furnitureImage.sprite = furnitureSO.openSprite[0];
                 _changeToOpenSprite = true;
+                _interactBtn.SetActive(false);
             }
         }
         private void OnTriggerStay2D(Collider2D other)
@@ -131,6 +138,8 @@ namespace THJ
                     gameInfo.tileCursorSystem.character.InteractLeft();
                     break;
             }
+
+            AudioController.Instance.PlayFX("Popup");
 
             switch (furnitureSO.searchFurnitureType)
             {

@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace THJ
 {
@@ -22,41 +24,43 @@ namespace THJ
         int progressValues = 0;
         [TabGroup("GameStatus")] public TMP_Text sanityText;
         float sanityValues = 100;
+        [TabGroup("GameStatus")] public Canvas mainCanvas;
 
-        [TabGroup("Game Database")] public List<ItemSO> allItems = new();
+        [TabGroup("Game Database")] public List<ItemsSetup> allItems = new();
+        List<ItemSO> ingameItemList = new();
+
+        [Serializable]
+        public class ItemsSetup
+        {
+            public ItemSO targetItem;
+            public int itemCount;
+        }
         [TabGroup("Game Database")] public List<FurnitureInteract> allFurniture;
 
-        [TabGroup("Current Game Info")] public int collectKeys { get; set; } = 0;
-        [TabGroup("Current Game Info")] public ItemSO HeadPart { get; set; }
-        [TabGroup("Current Game Info")] public GameObject HeadCursor;
-        [TabGroup("Current Game Info")] public GameObject HeadSlot;
-        public bool collectHead = false;
+        [TabGroup("Current Game Info"), ReadOnly] public int KeyitemsCollected = 0;
+        [TabGroup("Current Game Info"), ReadOnly] public int ErrorPartsEquip = 0;
+        [TabGroup("Current Game Info"), ReadOnly] public ItemBox CurrentItemBox;
 
-        [TabGroup("Current Game Info")] public ItemSO HandsPart { get; set; }
-        [TabGroup("Current Game Info")] public GameObject HandsCursor;
-        [TabGroup("Current Game Info")] public GameObject HandsSlot;
-        public bool collectHands = false;
+        public bool CollectHeadKey = false;
+        public bool collectHandsKey = false;
+        public bool collectOrgansKey = false;
+        public bool collectLegsKey = false;
 
-        [TabGroup("Current Game Info")] public ItemSO OrgansPart { get; set; }
-        [TabGroup("Current Game Info")] public GameObject OrgansCursor;
-        [TabGroup("Current Game Info")] public GameObject OrgansSlot;
-        public bool collectOrgans = false;
-
-        [TabGroup("Current Game Info")] public ItemSO LegsPart { get; set; }
-        [TabGroup("Current Game Info")] public GameObject LegsCursor;
-        [TabGroup("Current Game Info")] public GameObject LegsSlot;
-        public bool collectLegs = false;
 
         [Header("Items")]
         [TabGroup("Current Game Info")] public List<ItemSO> currentItems;
 
-        public GameObject characterPrefab;
+        [TabGroup("character", "Character Status")] public GameObject characterPrefab;
 
         public TileCursorSystem tileCursorSystem { get; set; }
         public MapManager mapManager { get; set; }
         public DiceSystem diceSystem { get; set; }
         public SearchSystem searchSystem { get; set; }
         public UIController uiController { get; set; }
+        public InventorySystem inventorySystem { get; set; }
+        public EquipmentSystem equipmentSystem { get; set; }
+
+        //Game Vibe Controller
         bool phase2 = false;
         bool lose = false;
 
@@ -68,10 +72,12 @@ namespace THJ
             diceSystem = FindObjectOfType<DiceSystem>();
             searchSystem = FindObjectOfType<SearchSystem>();
             uiController = FindObjectOfType<UIController>();
+            inventorySystem = FindObjectOfType<InventorySystem>();
+            equipmentSystem = FindObjectOfType<EquipmentSystem>();
 
             sanityText.text = sanityValues.ToString();
             progressText.text = progressValues.ToString();
-            collectKeys = 0;
+            KeyitemsCollected = 0;
         }
 
         private void Start()
@@ -112,32 +118,11 @@ namespace THJ
                 }
             }
 
-
-            if (collectHead && !HeadCursor.activeSelf)
-            {
-                HeadCursor.SetActive(true);
-                HeadSlot.SetActive(true);
-            }
-            if (collectHands && !HandsCursor.activeSelf)
-            {
-                HandsCursor.SetActive(true);
-                HandsSlot.SetActive(true);
-            }
-            if (collectLegs && !LegsCursor.activeSelf)
-            {
-                LegsCursor.SetActive(true);
-                LegsSlot.SetActive(true);
-            }
-            if (collectOrgans && !OrgansCursor.activeSelf)
-            {
-                OrgansCursor.SetActive(true);
-                OrgansSlot.SetActive(true);
-            }
         }
 
         public void UpdateSanityText(float value)
         {
-            if (value > 0) value += diceSystem.diceCount / 2f;
+            if (value > 0) value += (diceSystem.diceCount / 10f) + (ErrorPartsEquip * 0.75f);
             sanityValues -= value;
             if (sanityValues >= 100) sanityValues = 100f;
             sanityText.text = ((int)sanityValues).ToString();
@@ -152,34 +137,67 @@ namespace THJ
 
         private void InitItemToFurniture()
         {
+            foreach (var item in allItems)
+            {
+                for (int i = 0; i < item.itemCount; i++)
+                {
+                    ingameItemList.Add(item.targetItem);
+                }
+            }
+
+            Utils.ShuffleList(ingameItemList);
+
             int itemIndex = 0;
-            if (allFurniture.Count > 0 && allItems.Count > 0)
+            int furnitureCount = 0;
+            // if (allFurniture.Count > 0 && ingameItemList.Count > 0)
+            // {
+            //     for (furnitureCount = 0; furnitureCount < allFurniture.Count; furnitureCount++)
+            //     {
+            //         if (allFurniture[furnitureCount].searchItemList.Count == allFurniture[furnitureCount].maxStorageCount) return;
+            //         allFurniture[furnitureCount].InitItems(ingameItemList[itemIndex]);
+            //         itemIndex++;
+            //         if (furnitureCount > allFurniture.Count) furnitureCount = 0;
+            //     }
+            // }
+
+            if (allFurniture.Count > 0 && ingameItemList.Count > 0)
             {
                 for (int i = 0; i < allFurniture.Count; i++)
                 {
-                    if (itemIndex >= allItems.Count) return;
-                    allFurniture[i].InitItems(allItems[itemIndex]);
-                    itemIndex++;
+                    // Utils.ShuffleList(allFurniture);
+
+                    if (allFurniture[i].searchItemList.Count >= allFurniture[i].maxStorageCount) return;
+                    else if (allFurniture[i].searchItemList.Count < allFurniture[i].maxStorageCount)
+                    {
+                        // int randomCount = Random.Range(1, allFurniture[i].maxStorageCount);
+
+                        for (int j = 0; j < allFurniture[i].maxStorageCount; j++)
+                        {
+                            if (itemIndex >= ingameItemList.Count) return;
+                            allFurniture[i].InitItems(ingameItemList[itemIndex]);
+                            itemIndex++;
+                        }
+                    }
                 }
             }
 
-            if (itemIndex > 0 && itemIndex < allItems.Count)
-            {
-                Utils.ShuffleList(allFurniture);
+            // if (itemIndex > 0 && itemIndex < ingameItemList.Count)
+            // {
+            //     Utils.ShuffleList(allFurniture);
 
-                for (int i = 0; i < allFurniture.Count; i++)
-                {
-                    if (itemIndex >= allItems.Count) return;
-                    allFurniture[i].InitItems(allItems[itemIndex]);
-                    itemIndex++;
-                }
-            }
+            //     for (int i = 0; i < allFurniture.Count; i++)
+            //     {
+            //         if (allFurniture[i].searchItemList.Count == allFurniture[i].maxStorageCount) return;
+            //         allFurniture[i].InitItems(ingameItemList[itemIndex]);
+            //         itemIndex++;
+            //     }
+            // }
         }
 
         public void SetDiceValue(int value)
         {
-            if (value > 0)
-                currentDiceValue = value;
+            if(value < 0) value = 1;
+            currentDiceValue = value;
         }
 
         public void SetMovementRange(int value)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using static THJ.ArrowTranslator;
 
 namespace THJ
@@ -11,6 +12,8 @@ namespace THJ
         GameInfo gameInfo;
 
         public GameObject cursor;
+        public RenderTexture renderTexture;
+        public RawImage displayRawImage;
 
         public CharacterInfo character { get; set; }
         PathFinder pathFinder;
@@ -35,10 +38,13 @@ namespace THJ
 
             path = new List<OverlayTile>();
             rangeFinderTiles = new List<OverlayTile>();
+
+            UpdateRenderTextureSize();
         }
 
         void Update()
         {
+            UpdateRenderTextureSize();
             RaycastHit2D? hit = GetFocusedOnTile();
 
             if (hit.HasValue && hit.Value.collider.tag != "Furniture")
@@ -72,7 +78,6 @@ namespace THJ
                 if (Input.GetMouseButtonDown(0) && tile != null && tile.canMoveTo)
                 {
                     tile.ShowTile();
-
                     gameInfo.isMoving = true;
                     tile.gameObject.GetComponent<OverlayTile>().HideTile();
                 }
@@ -168,13 +173,42 @@ namespace THJ
             return null;
         }
 
+        void UpdateRenderTextureSize()
+        {
+            // Get the current screen resolution
+            int screenWidth = Screen.width;
+            int screenHeight = Screen.height;
+
+            if (renderTexture == null || renderTexture.width != screenWidth || renderTexture.height != screenHeight)
+            {
+                if (renderTexture != null)
+                {
+                    renderTexture.Release();
+                    // Destroy(renderTexture);
+                }
+
+                renderTexture = new RenderTexture(screenWidth, screenHeight, 24);
+                renderTexture.name = "TempDisplayTexture";
+                renderTexture.filterMode = FilterMode.Bilinear;
+
+                Camera.main.targetTexture = renderTexture;
+                displayRawImage.texture = renderTexture;
+                Debug.Log("UPDATE TEXTURE");
+            }
+        }
+
         public void GetInRangeTiles()
         {
             rangeFinderTiles = rangeFinder.GetTilesInRange(new Vector2Int(character.standingOnTile.gridLocation.x, character.standingOnTile.gridLocation.y), gameInfo.MovementRange);
 
             foreach (var item in rangeFinderTiles)
             {
-                item.ShowTile();
+                if (!gameInfo.equipmentSystem.equipLegs)
+                    item.ShowTile(1);
+                else if (gameInfo.equipmentSystem.equipLegs && gameInfo.diceSystem.usingMeatDice)
+                    item.ShowTile(2);
+                else
+                    item.ShowTile(0);
             }
         }
     }

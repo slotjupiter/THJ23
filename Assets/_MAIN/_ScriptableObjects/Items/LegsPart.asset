@@ -15,5 +15,5 @@ MonoBehaviour:
   KeyItem: 0
   itemType: 2
   itemSprite: {fileID: 21300000, guid: f7d44051006d83845b05f9563484f067, type: 3}
-  itemName: Priest Head
-  itemDescription: Head of Hard Head Priest
+  itemName: Leg
+  itemDescription: Some random rotten leg.
