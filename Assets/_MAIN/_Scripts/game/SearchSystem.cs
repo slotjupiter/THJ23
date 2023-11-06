@@ -33,6 +33,7 @@ public class SearchSystem : MonoBehaviour
 
     SearchFurniture currentSearch;
     GameObject currentObjectOpen;
+    GameInfo gameInfo;
 
     private void Start()
     {
@@ -42,6 +43,7 @@ public class SearchSystem : MonoBehaviour
         _cabinetBSearch = CabinetBSearchUI.gameObject.GetComponent<SearchFurniture>();
         _cabinetCSearch = CabinetCSearchUI.gameObject.GetComponent<SearchFurniture>();
         _cabinetDSearch = CabinetDSearchUI.gameObject.GetComponent<SearchFurniture>();
+        gameInfo = FindObjectOfType<GameInfo>();
     }
 
     public void ClosePanel()
@@ -63,6 +65,15 @@ public class SearchSystem : MonoBehaviour
         {
             int indexRandom = Random.Range(0, randomTextHeader.Count - 1);
             textHeader.text = randomTextHeader[indexRandom];
+        }
+    }
+
+    private void RandomTextHeader(TMP_Text header)
+    {
+        if (randomTextHeader.Count > 0)
+        {
+            int indexRandom = Random.Range(0, randomTextHeader.Count - 1);
+            header.text = randomTextHeader[indexRandom];
         }
     }
 
@@ -119,5 +130,16 @@ public class SearchSystem : MonoBehaviour
         currentObjectOpen = CabinetDSearchUI;
     }
 
-
+    public void OpenElectricPole()
+    {
+        if (gameInfo.equipmentSystem.equipHands)
+        {
+            RandomTextHeader(gameInfo.minigamesSystem.organsMinigame.gameHeader);
+            gameInfo.minigamesSystem.organsMinigame.organsGamePanel.SetActive(true);
+        }
+        else
+        {
+            gameInfo.dialogueSystem.SetForceText("I need 'Hands'");
+        }
+    }
 }

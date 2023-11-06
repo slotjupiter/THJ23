@@ -16,6 +16,7 @@ namespace THJ
 
         public static AudioController Instance;
 
+        bool canPlay;
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -23,12 +24,25 @@ namespace THJ
                 Destroy(gameObject);
             }
             else Instance = this;
+
+            canPlay = false;
         }
 
         public void PlayFX(string key)
         {
             if (soundDB.ContainsKey(key))
                 fxSource.PlayOneShot(soundDB[key]);
+        }
+
+        public void PlayFXWithTime(string key, float time)
+        {
+            if (!canPlay)
+            {
+                canPlay = true;
+                DOVirtual.DelayedCall(time, () => canPlay = false);
+                if (soundDB.ContainsKey(key))
+                    fxSource.PlayOneShot(soundDB[key]);
+            }
         }
 
         public void PlayBGM(string key)

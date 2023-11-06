@@ -11,7 +11,7 @@ public class FurnitureSO : SerializedScriptableObject
     [TabGroup("Setup")]
     public FurnitureType furnitureType;
 
-    [TabGroup("Setup"), ShowIf("@furnitureType == FurnitureType.SearchType")]
+    [TabGroup("Setup")]
     public SearchFurnitureType searchFurnitureType = SearchFurnitureType.Locker;
 
     [TabGroup("Setup"), PreviewField(Alignment = ObjectFieldAlignment.Center)]
@@ -29,6 +29,6 @@ public class FurnitureSO : SerializedScriptableObject
 
     public enum SearchFurnitureType
     {
-        Locker, Cabinet_A, Cabinet_B, Cabinet_C, Cabinet_D
+        Locker, Cabinet_A, Cabinet_B, Cabinet_C, Cabinet_D, ElectricPole
     }
 }

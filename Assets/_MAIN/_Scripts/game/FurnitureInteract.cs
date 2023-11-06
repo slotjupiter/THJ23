@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,9 @@ namespace THJ
         [TabGroup("Furniture Setup")] public SpriteRenderer furnitureImage;
         [TabGroup("Furniture Setup")] public FurnitureSO furnitureSO;
         [TabGroup("Furniture Setup")] public Transform interactBtnPos;
+        [TabGroup("Furniture Setup")] public bool isKeyFurniture = false;
+        [TabGroup("Furniture Setup"), ShowIf("@isKeyFurniture")] public ItemType keyType;
+
         [TabGroup("Furniture Setup"), ReadOnly] public List<ItemSO> searchItemList;
         [TabGroup("Furniture Setup")] public int maxStorageCount;
         int storageCount;
@@ -24,6 +28,7 @@ namespace THJ
 
         GameInfo gameInfo;
         GameObject _interactBtn;
+        Image _interactImg;
         bool playerInFront = false;
         bool setUpButton = false;
 
@@ -45,11 +50,15 @@ namespace THJ
         public void Initialized()
         {
             _interactBtn = gameInfo.mapManager.interactButton;
+            _interactImg = _interactBtn.GetComponent<Image>();
 
-            if (gameObject.transform.localScale.x == 1 && InteractSide != "Left" || InteractSide == "Right")
-                currentFaceDirection = "Right";
-            else if (gameObject.transform.localScale.x == -1 || InteractSide == "Left")
-                currentFaceDirection = "Left";
+            if (InteractSide != "Center")
+            {
+                if (gameObject.transform.localScale.x == 1 && InteractSide != "Left" || InteractSide == "Right")
+                    currentFaceDirection = "Right";
+                else if (gameObject.transform.localScale.x == -1 || InteractSide == "Left")
+                    currentFaceDirection = "Left";
+            }
         }
 
         public void InitItems(ItemSO item)
@@ -70,7 +79,14 @@ namespace THJ
             }
             else if (!gameInfo.inventorySystem.openInventory && !_interactBtn.activeSelf && playerInFront)
             {
-                _interactBtn.SetActive(true);
+                if (!isKeyFurniture)
+                    _interactBtn.SetActive(true);
+                else
+                {
+                    bool isPassed = CheckKeyProgress();
+                    if (!isPassed) _interactBtn.SetActive(true);
+                    else _interactBtn.SetActive(false);
+                }
             }
 
             if (isFullySearch && furnitureSO && furnitureImage && !_changeToOpenSprite)
@@ -87,9 +103,17 @@ namespace THJ
                 if (!playerInFront)
                     playerInFront = true;
 
-                if (!_interactBtn.activeSelf)
+                if (!_interactBtn.activeSelf && !isKeyFurniture)
                 {
+                    _interactImg.color = gameInfo.mapManager.furnitureInteract;
                     _interactBtn.SetActive(true);
+                }
+                else if (!_interactBtn.activeSelf && isKeyFurniture)
+                {
+                    _interactImg.color = gameInfo.mapManager.puzzleInteract;
+                    bool isPassed = CheckKeyProgress();
+                    if (!isPassed) _interactBtn.SetActive(true);
+                    else _interactBtn.SetActive(false);
                 }
             }
 
@@ -125,6 +149,27 @@ namespace THJ
                 }
         }
 
+        private bool CheckKeyProgress()
+        {
+            switch (keyType)
+            {
+                case ItemType.HeadPart:
+                    if (gameInfo.CollectHeadKey) return true;
+                    else return false;
+                case ItemType.HandsPart:
+                    if (gameInfo.collectHandsKey) return true;
+                    else return false;
+                case ItemType.LegsPart:
+                    if (gameInfo.collectLegsKey) return true;
+                    else return false;
+                case ItemType.OrgansPart:
+                    if (gameInfo.collectOrgansKey) return true;
+                    else return false;
+                default:
+                    return false;
+            }
+        }
+
         private void Interact()
         {
             canOpen = false;
@@ -137,31 +182,42 @@ namespace THJ
                 case "Right":
                     gameInfo.tileCursorSystem.character.InteractLeft();
                     break;
+                case "Center":
+                    break;
             }
 
             AudioController.Instance.PlayFX("Popup");
 
-            switch (furnitureSO.searchFurnitureType)
+            if (furnitureSO.furnitureType == FurnitureSO.FurnitureType.SearchType)
+                switch (furnitureSO.searchFurnitureType)
+                {
+                    case FurnitureSO.SearchFurnitureType.Locker:
+                        gameInfo.searchSystem.OpenLocker(searchItemList, this);
+                        break;
+                    case FurnitureSO.SearchFurnitureType.Cabinet_A:
+                        gameInfo.searchSystem.OpenCabinetA(searchItemList, this);
+                        break;
+                    case FurnitureSO.SearchFurnitureType.Cabinet_B:
+                        gameInfo.searchSystem.OpenCabinetB(searchItemList, this);
+                        break;
+                    case FurnitureSO.SearchFurnitureType.Cabinet_C:
+                        gameInfo.searchSystem.OpenCabinetC(searchItemList, this);
+                        break;
+                    case FurnitureSO.SearchFurnitureType.Cabinet_D:
+                        gameInfo.searchSystem.OpenCabinetD(searchItemList, this);
+                        break;
+
+                }
+            else
             {
-                case FurnitureSO.SearchFurnitureType.Locker:
-                    gameInfo.searchSystem.OpenLocker(searchItemList, this);
-                    break;
-                case FurnitureSO.SearchFurnitureType.Cabinet_A:
-                    gameInfo.searchSystem.OpenCabinetA(searchItemList, this);
-                    break;
-                case FurnitureSO.SearchFurnitureType.Cabinet_B:
-                    gameInfo.searchSystem.OpenCabinetB(searchItemList, this);
-                    break;
-                case FurnitureSO.SearchFurnitureType.Cabinet_C:
-                    gameInfo.searchSystem.OpenCabinetC(searchItemList, this);
-                    break;
-                case FurnitureSO.SearchFurnitureType.Cabinet_D:
-                    gameInfo.searchSystem.OpenCabinetD(searchItemList, this);
-                    break;
+                switch (furnitureSO.searchFurnitureType)
+                {
+                    case FurnitureSO.SearchFurnitureType.ElectricPole:
+                        gameInfo.searchSystem.OpenElectricPole();
+                        break;
+                }
             }
 
         }
     }
-
 }
-

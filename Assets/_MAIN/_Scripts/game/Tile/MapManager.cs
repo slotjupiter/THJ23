@@ -16,6 +16,9 @@ namespace THJ
         public GameObject overlayContainer;
         public Dictionary<Vector2Int, OverlayTile> map;
         public GameObject interactButton;
+        public Color furnitureInteract;
+        public Color puzzleInteract;
+
 
         private void Awake()
         {

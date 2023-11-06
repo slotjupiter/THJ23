@@ -59,6 +59,8 @@ namespace THJ
         public UIController uiController { get; set; }
         public InventorySystem inventorySystem { get; set; }
         public EquipmentSystem equipmentSystem { get; set; }
+        public DialogueSystem dialogueSystem { get; set; }
+        public MinigamesSystem minigamesSystem { get; set; }
 
         //Game Vibe Controller
         bool phase2 = false;
@@ -74,6 +76,8 @@ namespace THJ
             uiController = FindObjectOfType<UIController>();
             inventorySystem = FindObjectOfType<InventorySystem>();
             equipmentSystem = FindObjectOfType<EquipmentSystem>();
+            dialogueSystem = FindObjectOfType<DialogueSystem>();
+            minigamesSystem = FindObjectOfType<MinigamesSystem>();
 
             sanityText.text = sanityValues.ToString();
             progressText.text = progressValues.ToString();
@@ -196,7 +200,7 @@ namespace THJ
 
         public void SetDiceValue(int value)
         {
-            if(value < 0) value = 1;
+            if (value <= 0) value = 1;
             currentDiceValue = value;
         }
 

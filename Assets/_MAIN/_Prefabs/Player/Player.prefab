@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 3139638458292251568}
   - component: {fileID: 2146071295365012693}
   - component: {fileID: 7454786351721752223}
+  - component: {fileID: 3358192202358569733}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -309,6 +310,36 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &3358192202358569733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5850204406844604886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShadowGroup: 0
+  m_ComponentVersion: 1
+  m_HasRenderer: 1
+  m_UseRendererSilhouette: 1
+  m_CastsShadows: 1
+  m_SelfShadows: 0
+  m_ApplyToSortingLayers: 00000000dfe0d0620d48c657b7a1059a
+  m_ShapePath:
+  - {x: -0.125, y: -0.125, z: 0}
+  - {x: -0.1363751, y: 1.2473426, z: 0}
+  - {x: 0.09087473, y: 1.2473426, z: 0}
+  - {x: 0.125, y: -0.125, z: 0}
+  m_ShapePathHash: 596638455
+  m_Mesh: {fileID: 0}
+  m_InstanceId: -57930
+  m_LocalBounds:
+    m_Center: {x: -0.0056875497, y: 0.5611713, z: 0}
+    m_Extent: {x: 0.13068755, y: 0.6861713, z: 0}
 --- !u!1 &8680294409547312156
 GameObject:
   m_ObjectHideFlags: 0

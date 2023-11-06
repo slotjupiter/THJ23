@@ -30,6 +30,8 @@ namespace THJ
         }
         public void CloseBorder()
         {
+            AudioController.Instance.PlayFX("Popup");
+
             foreach (var item in loreBorder)
             {
                 item.SetActive(false);
