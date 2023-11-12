@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using THJ;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class SearchSystem : MonoBehaviour
@@ -30,6 +31,13 @@ public class SearchSystem : MonoBehaviour
 
     public GameObject CabinetDSearchUI;
     SearchFurniture _cabinetDSearch;
+
+    [TabGroup("Book")] public GameObject bookPanel;
+    [TabGroup("Book")] public Image bookImage;
+    [TabGroup("Book")] public Sprite book1SpriteOpen;
+    [TabGroup("Book")] public Sprite book2SpriteOpen;
+    [TabGroup("Book")] public Sprite book3SpriteOpen;
+
 
     SearchFurniture currentSearch;
     GameObject currentObjectOpen;
@@ -57,6 +65,31 @@ public class SearchSystem : MonoBehaviour
 
         AudioController.Instance.PlayFX("Popup");
         SearchPanelUI.SetActive(false);
+    }
+
+    public void CloseBook()
+    {
+        AudioController.Instance.PlayFX("CloseBook");
+        bookPanel.SetActive(false);
+    }
+
+    public void OpenBook(ItemType bookType)
+    {
+        switch (bookType)
+        {
+            case ItemType.Book1:
+                bookImage.sprite = book1SpriteOpen;
+                bookPanel.SetActive(true);
+                break;
+            case ItemType.Book2:
+                bookImage.sprite = book2SpriteOpen;
+                bookPanel.SetActive(true);
+                break;
+            case ItemType.Book3:
+                bookImage.sprite = book3SpriteOpen;
+                bookPanel.SetActive(true);
+                break;
+        }
     }
 
     private void RandomTextHeader()
@@ -132,14 +165,53 @@ public class SearchSystem : MonoBehaviour
 
     public void OpenElectricPole()
     {
+        if (gameInfo.collectOrgansKey) return;
+
         if (gameInfo.equipmentSystem.equipHands)
         {
             RandomTextHeader(gameInfo.minigamesSystem.organsMinigame.gameHeader);
             gameInfo.minigamesSystem.organsMinigame.organsGamePanel.SetActive(true);
         }
         else
-        {
             gameInfo.dialogueSystem.SetForceText("I need 'Hands'");
+    }
+
+    public void OpenBookShelf()
+    {
+        if (gameInfo.CollectHeadKey) return;
+
+        if (gameInfo.equipmentSystem.equipHands)
+        {
+            RandomTextHeader(gameInfo.minigamesSystem.headMinigame.gameHeader);
+            gameInfo.minigamesSystem.headMinigame.OpenHeadMinigame();
         }
+        else
+            gameInfo.dialogueSystem.SetForceText("I need 'Hands'");
+    }
+
+    public void OpenTiltBed()
+    {
+        if (gameInfo.collectLegsKey) return;
+
+        if (gameInfo.equipmentSystem.equipHands)
+        {
+            RandomTextHeader(gameInfo.minigamesSystem.legsMinigame.gameHeader);
+            gameInfo.minigamesSystem.legsMinigame.OpenLegsMinigame();
+        }
+        else
+            gameInfo.dialogueSystem.SetForceText("I need 'Hands'");
+    }
+
+    public void OpenScales()
+    {
+        if (gameInfo.collectHandsKey) return;
+
+        if (gameInfo.equipmentSystem.equipHands)
+        {
+            RandomTextHeader(gameInfo.minigamesSystem.armsMinigame.gameHeader);
+            gameInfo.minigamesSystem.armsMinigame.OpenArmsMinigame();
+        }
+        else
+            gameInfo.dialogueSystem.SetForceText("I need 'Hands'");
     }
 }

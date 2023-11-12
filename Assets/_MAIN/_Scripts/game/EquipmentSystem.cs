@@ -89,6 +89,25 @@ namespace THJ
             SpecificPartDecrease(LegsPart, legsDrop, legsDrop.errorParts);
         }
 
+        public void UpdateEquipmentsDurable(string part)
+        {
+            switch (part)
+            {
+                case "Head":
+                    SpecificPartDecrease(HeadPart, headDrop, headDrop.errorParts);
+                    break;
+                case "Hands":
+                    SpecificPartDecrease(HandsPart, handsDrop, handsDrop.errorParts);
+                    break;
+                case "Organs":
+                    SpecificPartDecrease(OrgansPart, organsDrop, organsDrop.errorParts);
+                    break;
+                case "Legs":
+                    SpecificPartDecrease(LegsPart, legsDrop, legsDrop.errorParts);
+                    break;
+            }
+        }
+
         private void SpecificPartDecrease(ItemBox targetParts, ItemDrop targetDrop, bool isErrorParts)
         {
             int extraValue = 0;

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1098b225859f894b8eb6080cb088723, type: 3}
+  m_Name: Scales
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
+  furnitureName: Scales
+  furnitureType: 1
+  searchFurnitureType: 8
+  defaultSprite: {fileID: 21300000, guid: b52c47425a49f9d40b65998389e9bf7e, type: 3}
+  finishedSprite: {fileID: 21300000, guid: cc980c80af39e1d4594831d187fa0cfa, type: 3}
+  openSprite:
+  - {fileID: 21300000, guid: 709508b699148374bb3b119022818d46, type: 3}

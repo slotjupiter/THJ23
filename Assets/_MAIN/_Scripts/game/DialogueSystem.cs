@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Febucci.UI;
+using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,20 +11,23 @@ namespace THJ
 {
     public class DialogueSystem : MonoBehaviour
     {
-        public GameObject dialoguePanel;
-        public Button closeBtn;
-        public TMP_Text dialogueText;
-        public TextAnimator_TMP dialogueAnimatorText;
-        public bool ShowText { get; set; }
+        [TabGroup("Dialogue")] public GameObject dialoguePanel;
+        [TabGroup("Dialogue")] public Button closeBtn;
+        [TabGroup("Dialogue")] public TMP_Text dialogueText;
+        [TabGroup("Dialogue")] public TextAnimator_TMP dialogueAnimatorText;
+        [TabGroup("Dialogue")] public bool ShowText { get; set; }
         bool activeDialogue = false;
-
         bool forceEnd = false;
         float forceTime;
         Action forceAction = null;
+        GameInfo gameInfo;
+
+        [TabGroup("Reset")] public GameObject resetPanel;
 
         private void Start()
         {
             ShowText = false;
+            gameInfo = FindObjectOfType<GameInfo>();
         }
 
         private void Update()
@@ -41,6 +45,24 @@ namespace THJ
                 forceEnd = false;
                 StartCoroutine(ClosePanelForceEnd());
             }
+        }
+
+        public void OpenResetPanel()
+        {
+            AudioController.Instance.PlayFX("Popup");
+            resetPanel.SetActive(true);
+        }
+
+        public void CloseResetPanel()
+        {
+            AudioController.Instance.PlayFX("Popup");
+            resetPanel.SetActive(false);
+        }
+
+        public void ResetGame()
+        {
+            AudioController.Instance.PlayFX("Click");
+            gameInfo.uiController.ResetGame();
         }
 
         public void ClosePanel()

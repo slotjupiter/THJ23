@@ -61,9 +61,11 @@ namespace THJ
         public EquipmentSystem equipmentSystem { get; set; }
         public DialogueSystem dialogueSystem { get; set; }
         public MinigamesSystem minigamesSystem { get; set; }
+        public ProgressController progressController { get; set; }
 
         //Game Vibe Controller
         bool phase2 = false;
+        bool phase3 = false;
         bool lose = false;
 
         private void Awake()
@@ -78,6 +80,7 @@ namespace THJ
             equipmentSystem = FindObjectOfType<EquipmentSystem>();
             dialogueSystem = FindObjectOfType<DialogueSystem>();
             minigamesSystem = FindObjectOfType<MinigamesSystem>();
+            progressController = FindObjectOfType<ProgressController>();
 
             sanityText.text = sanityValues.ToString();
             progressText.text = progressValues.ToString();
@@ -96,15 +99,59 @@ namespace THJ
             InitItemToFurniture();
         }
 
-        private void Update()
+        public void UpdateSanityText(float value)
+        {
+            if (value > 0) value += (diceSystem.diceCount / 10f) + (ErrorPartsEquip * 0.75f);
+            sanityValues -= value;
+            if (sanityValues >= 100) sanityValues = 100f;
+            sanityText.text = ((int)sanityValues).ToString();
+
+            UpdateSanityStatus();
+        }
+
+        public void UpdateProgressText(int value)
+        {
+            progressValues += value;
+            progressText.text = progressValues.ToString();
+
+            if (progressValues >= 100f && sanityValues > 0f)
+            {
+                progressText.text = "100";
+                progressController.ActiveWinButton();
+            }
+        }
+
+        private void UpdateSanityStatus()
         {
             if (gameStart)
             {
-                if (progressValues >= 100f && !lose)
+                //*Sanity Check
+                if (sanityValues > 60f)
                 {
-                    progressText.text = "100";
-                    uiController.GameWin();
+                    progressController.skinProperties.SetSkin(progressController.skinProperties.aliveSkin);
+                    progressController.SetBGColor(progressController.defaultColor);
                 }
+                else if (sanityValues <= 60f && sanityValues > 30f)
+                {
+                    if (!phase2)
+                    {
+                        phase2 = true;
+                        progressController.skinProperties.SetSkin(progressController.skinProperties.halfSkin);
+                        AudioController.Instance.PlayBGM("UnsafeBG");
+                    }
+                    progressController.SetBGColor(progressController.halfColor);
+                }
+                else if (sanityValues <= 30f && sanityValues > 0f)
+                {
+                    if (!phase3 && phase2)
+                    {
+                        phase3 = true;
+                        progressController.skinProperties.SetSkin(progressController.skinProperties.deceaseSkin);
+                        AudioController.Instance.PlayBGM("NoiseCrackBG");
+                    }
+                    progressController.SetBGColor(progressController.criticalColor);
+                }
+                //! Lose
                 else if (sanityValues <= 0)
                 {
                     if (!lose)
@@ -114,28 +161,7 @@ namespace THJ
                         uiController.GameOver();
                     }
                 }
-
-                if (sanityValues <= 50f && !phase2)
-                {
-                    phase2 = true;
-                    AudioController.Instance.PlayBGM("UnsafeBG");
-                }
             }
-
-        }
-
-        public void UpdateSanityText(float value)
-        {
-            if (value > 0) value += (diceSystem.diceCount / 10f) + (ErrorPartsEquip * 0.75f);
-            sanityValues -= value;
-            if (sanityValues >= 100) sanityValues = 100f;
-            sanityText.text = ((int)sanityValues).ToString();
-        }
-
-        public void UpdateProgressText(int value)
-        {
-            progressValues += value;
-            progressText.text = progressValues.ToString();
         }
 
 

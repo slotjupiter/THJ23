@@ -115,6 +115,11 @@ namespace THJ
                     if (!isPassed) _interactBtn.SetActive(true);
                     else _interactBtn.SetActive(false);
                 }
+                else if (_interactBtn.activeSelf && isKeyFurniture)
+                {
+                    bool isPassed = CheckKeyProgress();
+                    if (isPassed) _interactBtn.SetActive(false);
+                }
             }
 
             if (playerInFront && canOpen)
@@ -214,6 +219,15 @@ namespace THJ
                 {
                     case FurnitureSO.SearchFurnitureType.ElectricPole:
                         gameInfo.searchSystem.OpenElectricPole();
+                        break;
+                    case FurnitureSO.SearchFurnitureType.BookShelf:
+                        gameInfo.searchSystem.OpenBookShelf();
+                        break;
+                    case FurnitureSO.SearchFurnitureType.TiltBed:
+                        gameInfo.searchSystem.OpenTiltBed();
+                        break;
+                    case FurnitureSO.SearchFurnitureType.Scales:
+                        gameInfo.searchSystem.OpenScales();
                         break;
                 }
             }

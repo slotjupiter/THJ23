@@ -40,6 +40,8 @@ namespace THJ
                 {
                     gameInfo.minigamesSystem.organsWin = true;
                     gameInfo.collectOrgansKey = true;
+                    gameInfo.UpdateProgressText(25);
+                    gameInfo.equipmentSystem.UpdateEquipmentsDurable("Hands");
                     closeBtn.SetActive(false);
                     StartCoroutine(GiveOrgansSequences(gameInfo.minigamesSystem.organsWin));
                 }
@@ -56,7 +58,7 @@ namespace THJ
             gameBG.sprite = completedBG;
             gameInfo.inventorySystem.CreateItemBox(gameInfo.minigamesSystem.organsKey);
             yield return new WaitForSeconds(1.5f);
-            gameInfo.dialogueSystem.SetForceTextWithTimeEnd("You got 'An Organs'", 1.5f, () =>
+            gameInfo.dialogueSystem.SetForceTextWithTimeEnd("You acquired organs as a reward.", 1.5f, () =>
             {
                 DOVirtual.Float(0f, 1.8f, 0.5f, x => poleLightDisplay.pointLightOuterRadius = x);
                 CloseOrgansPanel();

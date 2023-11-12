@@ -114,7 +114,7 @@ namespace THJ
             if (currentDiceType == NormalDiceObject)
                 AudioController.Instance.PlayFX("DiceRolling");
             else
-                AudioController.Instance.PlayFX("MeatDiceRolling");
+                AudioController.Instance.PlayFXWithDelay("MeatDiceRolling", 0.25f);
             yield return new WaitUntil(() => currentDiceType.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !currentDiceType.GetComponent<Animator>().IsInTransition(0));
             yield return new WaitForSeconds(0.35f);
 

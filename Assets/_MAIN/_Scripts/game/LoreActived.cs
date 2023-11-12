@@ -19,13 +19,17 @@ namespace THJ
 
         IEnumerator ActiveOBJ()
         {
+            blockBG.SetActive(true);
+            yield return new WaitForSeconds(0.75f);
             for (int i = 0; i < loreBorder.Count; i++)
             {
                 loreBorder[i].SetActive(true);
-                cancleButton[i].SetActive(true);
-                blockBG.SetActive(true);
                 AudioController.Instance.PlayFX("Popup");
                 yield return new WaitForSeconds(0.75f);
+            }
+            foreach (var btn in cancleButton)
+            {
+                btn.SetActive(true);
             }
         }
         public void CloseBorder()

@@ -13,8 +13,10 @@ namespace THJ
         GameInfo gameInfo;
         public CanvasGroup menuCanvasgroup;
         public TextAnimator_TMP pressAnykeyAnim;
+        public TextAnimator_TMP winQuotesText;
         public TextAnimator_TMP winText;
         public GameObject loseObj;
+        public GameObject logo;
 
         public GameObject HeadLore;
         public GameObject LegsLore;
@@ -42,19 +44,26 @@ namespace THJ
                         menuCanvasgroup.DOFade(0f, 0.5f).OnComplete(() => menuCanvasgroup.gameObject.SetActive(false));
                     }
                 }
+
+                if (winQuotesText.allLettersShown && winQuotesText.gameObject.activeSelf)
+                {
+                    winText.gameObject.SetActive(true);
+                }
             }
         }
 
         [Button("TestWin")]
         public void GameWin()
         {
+            AudioController.Instance.PlayFX("Click");
             pressAnykeyAnim.gameObject.SetActive(false);
+            menuCanvasgroup.alpha = 0f;
             menuCanvasgroup.gameObject.SetActive(true);
             menuCanvasgroup.DOFade(1f, 0.8f).OnComplete(
                 () =>
                 {
                     AudioController.Instance.FadeToStopBGM();
-                    winText.gameObject.SetActive(true);
+                    winQuotesText.gameObject.SetActive(true);
                 });
         }
 
@@ -66,11 +75,29 @@ namespace THJ
 
             pressAnykeyAnim.gameObject.SetActive(false);
             loseObj.SetActive(true);
+            menuCanvasgroup.alpha = 0f;
             menuCanvasgroup.gameObject.SetActive(true);
             menuCanvasgroup.DOFade(1f, 0.8f).OnComplete(
                 () =>
                 {
                     DOVirtual.DelayedCall(4f, () =>
+                    {
+                        Scene scene = SceneManager.GetActiveScene();
+                        SceneManager.LoadScene(scene.name);
+                    });
+                });
+        }
+
+        public void ResetGame()
+        {
+            menuCanvasgroup.alpha = 0f;
+            logo.SetActive(false);
+            pressAnykeyAnim.gameObject.SetActive(false);
+            menuCanvasgroup.gameObject.SetActive(true);
+            menuCanvasgroup.DOFade(1f, 0.25f).OnComplete(
+                () =>
+                {
+                    DOVirtual.DelayedCall(1f, () =>
                     {
                         Scene scene = SceneManager.GetActiveScene();
                         SceneManager.LoadScene(scene.name);

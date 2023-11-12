@@ -70,21 +70,26 @@ public class ItemDrop : MonoBehaviour, IDropHandler, IPointerClickHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (eventData.pointerDrag != null)
+        if (eventData.pointerDrag != null && eventData.pointerDrag.gameObject.layer != 6)
         {
             ItemBox currentItemBox = eventData.pointerDrag.GetComponent<ItemBox>();
-            ItemType currentType = currentItemBox.itemData.itemType;
+            if (currentItemBox)
+            {
+                ItemType currentType = currentItemBox.itemData.itemType;
 
-            if (canDrop)
-            {
-                HandleDropType(dropType, currentType, currentItemBox);
-                // Destroy(eventData.pointerDrag.gameObject);
-                eventData.pointerDrag.gameObject.SetActive(false);
+                if (canDrop)
+                {
+                    HandleDropType(dropType, currentType, currentItemBox);
+                    // Destroy(eventData.pointerDrag.gameObject);
+                    eventData.pointerDrag.gameObject.SetActive(false);
+                }
+                else
+                {
+                    eventData.pointerDrag.GetComponent<ItemBox>().ReturnToPlace();
+                }
             }
-            else
-            {
-                eventData.pointerDrag.GetComponent<ItemBox>().ReturnToPlace();
-            }
+            else eventData.pointerDrag.GetComponent<ItemBox>().ReturnToPlace();
+
         }
     }
 
@@ -99,12 +104,15 @@ public class ItemDrop : MonoBehaviour, IDropHandler, IPointerClickHandler
                     {
                         gameInfo.UpdateSanityText(-10f);
                         AudioController.Instance.PlayFX("Drinking");
+                        gameInfo.equipmentSystem.UpdateEquipmentsDurable("Head");
+                        gameInfo.equipmentSystem.UpdateEquipmentsDurable("Organs");
                     }
                     else
                     {
                         float randomHeal = Random.Range(2f, 5f);
                         gameInfo.UpdateSanityText(-randomHeal);
                         AudioController.Instance.PlayFX("Puke");
+                        gameInfo.equipmentSystem.UpdateEquipmentsDurable();
                     }
                     currentSlotImg.color = errorParts ? gameInfo.equipmentSystem.errorColor : gameInfo.equipmentSystem.defaultColor;
                 }
@@ -135,11 +143,6 @@ public class ItemDrop : MonoBehaviour, IDropHandler, IPointerClickHandler
                 currentItemInSlot = refItembox;
                 break;
             case ItemType.Potion:
-
-                break;
-            case ItemType.Book:
-                break;
-            case ItemType.Fuse:
                 break;
             case ItemType.None:
                 break;

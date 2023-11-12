@@ -53,11 +53,11 @@ namespace THJ
             DoMaskable(true);
 
             if (!firstTime)
-                itemSlider.value = itemData.itemType != ItemType.Potion ? currentItemDurable : 0f;
+                itemSlider.value = (itemData.itemType != ItemType.Potion && !isKeyItem) ? currentItemDurable : 0f;
             else
             {
                 currentItemDurable = 100f;
-                itemSlider.value = itemData.itemType != ItemType.Potion ? currentItemDurable : 0f;
+                itemSlider.value = (itemData.itemType != ItemType.Potion && !isKeyItem) ? currentItemDurable : 0f;
             }
 
             SetBGColor(itemData.itemType);
@@ -111,14 +111,14 @@ namespace THJ
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            if (gameInfo) gameInfo.CurrentItemBox = this;
+            if (gameInfo && !isKeyItem) gameInfo.CurrentItemBox = this;
 
             DoMaskable(false);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            if (gameInfo)
+            if (gameInfo && !isKeyItem)
             {
                 itemboxRect.anchoredPosition += eventData.delta / gameInfo.mainCanvas.scaleFactor;
                 if (eventData.pointerDrag != null)
@@ -131,7 +131,7 @@ namespace THJ
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            if (gameInfo)
+            if (gameInfo && !isKeyItem)
                 gameInfo.equipmentSystem.DetectDropSlot(ItemType.None, false);
 
             ReturnToPlace();
@@ -139,7 +139,31 @@ namespace THJ
 
         public void OnPointerDown(PointerEventData eventData)
         {
-
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                if (gameInfo && isKeyItem)
+                {
+                    switch (itemData.itemType)
+                    {
+                        case ItemType.HeadPart:
+                            gameInfo.inventorySystem.ActiveInventoryPanel();
+                            gameInfo.uiController.OpenLore("Head");
+                            break;
+                        case ItemType.HandsPart:
+                            gameInfo.inventorySystem.ActiveInventoryPanel();
+                            gameInfo.uiController.OpenLore("Arms");
+                            break;
+                        case ItemType.LegsPart:
+                            gameInfo.inventorySystem.ActiveInventoryPanel();
+                            gameInfo.uiController.OpenLore("Legs");
+                            break;
+                        case ItemType.OrgansPart:
+                            gameInfo.inventorySystem.ActiveInventoryPanel();
+                            gameInfo.uiController.OpenLore("Organs");
+                            break;
+                    }
+                }
+            }
         }
     }
 

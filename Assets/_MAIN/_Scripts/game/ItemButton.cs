@@ -41,7 +41,7 @@ namespace THJ
 
         public void SetButton()
         {
-            if (refItemSO && refItemSO.itemType != ItemType.None)
+            if (refItemSO && refItemSO.itemType != ItemType.None && !IsBook(refItemSO.itemType))
             {
                 if (!gameInfo)
                     gameInfo = FindObjectOfType<GameInfo>();
@@ -62,6 +62,21 @@ namespace THJ
                         furniture.isFullySearch = true;
                 }
             }
+            else if (IsBook(refItemSO.itemType) && refItemSO)
+            {
+                if (!gameInfo)
+                    gameInfo = FindObjectOfType<GameInfo>();
+
+                AudioController.Instance.PlayFX("FlipBook");
+                gameInfo.searchSystem.OpenBook(refItemSO.itemType);
+            }
+        }
+
+        public bool IsBook(ItemType itemType)
+        {
+            if (itemType == ItemType.Book1 || itemType == ItemType.Book2 || itemType == ItemType.Book3)
+                return true;
+            else return false;
         }
     }
 }

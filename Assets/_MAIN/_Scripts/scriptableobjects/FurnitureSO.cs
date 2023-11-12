@@ -29,6 +29,6 @@ public class FurnitureSO : SerializedScriptableObject
 
     public enum SearchFurnitureType
     {
-        Locker, Cabinet_A, Cabinet_B, Cabinet_C, Cabinet_D, ElectricPole
+        Locker, Cabinet_A, Cabinet_B, Cabinet_C, Cabinet_D, ElectricPole, BookShelf, TiltBed, Scales
     }
 }

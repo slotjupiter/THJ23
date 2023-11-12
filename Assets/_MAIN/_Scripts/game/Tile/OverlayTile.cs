@@ -20,6 +20,7 @@ namespace THJ
 
         public bool canMoveTo = false;
         public bool isBlocked = false;
+        public bool isSpawner = false;
 
         public OverlayTile Previous;
         public Vector3Int gridLocation;

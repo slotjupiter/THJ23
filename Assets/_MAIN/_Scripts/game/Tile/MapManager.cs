@@ -69,6 +69,9 @@ namespace THJ
                         if (tileType.name == "Furniture")
                             overlayTile.GetComponent<OverlayTile>().isBlocked = true;
 
+                        if (tileType.name == "Spawn")
+                            overlayTile.GetComponent<OverlayTile>().isSpawner = true;
+
                         if (tileType.name == "Ground0")
                         {
                             overlayTile.GetComponent<OverlayTile>().name = "Near Furniture";
@@ -88,7 +91,7 @@ namespace THJ
             {
                 Random rand = new Random();
                 OverlayTile randomTile = map.ElementAt(rand.Next(0, map.Count)).Value;
-                if (!randomTile.isBlocked)
+                if (!randomTile.isBlocked && randomTile.isSpawner)
                 {
                     gameInfo.tileCursorSystem.character = Instantiate(gameInfo.characterPrefab).GetComponent<THJ.CharacterInfo>();
                     gameInfo.tileCursorSystem.PositionCharacterOnLine(randomTile);
@@ -97,6 +100,24 @@ namespace THJ
                 else
                 {
                     CreatePlayer();
+                }
+            }
+        }
+
+        public void MovePlayerToSpawn()
+        {
+            if (gameInfo.tileCursorSystem.character != null)
+            {
+                Random rand = new Random();
+                OverlayTile randomTile = map.ElementAt(rand.Next(0, map.Count)).Value;
+                if (!randomTile.isBlocked && randomTile.isSpawner)
+                {
+                    gameInfo.tileCursorSystem.PositionCharacterOnLine(randomTile);
+                    gameInfo.tileCursorSystem.currentGridPoint = randomTile.grid2DLocation;
+                }
+                else
+                {
+                    MovePlayerToSpawn();
                 }
             }
         }

@@ -12,6 +12,7 @@ namespace THJ
 
         public AudioSource bgmSource;
         public AudioSource bgmExtraSource;
+        public AudioSource bgmEventSource;
         public AudioSource fxSource;
 
         public static AudioController Instance;
@@ -45,6 +46,15 @@ namespace THJ
             }
         }
 
+        public void PlayFXWithDelay(string key, float time)
+        {
+            DOVirtual.DelayedCall(time, () =>
+            {
+                if (soundDB.ContainsKey(key))
+                    fxSource.PlayOneShot(soundDB[key]);
+            });
+        }
+
         public void PlayBGM(string key)
         {
             if (bgmSource.isPlaying) bgmSource.DOFade(0f, 0.25f).OnComplete(() =>
@@ -64,6 +74,28 @@ namespace THJ
                 bgmSource.loop = true;
                 bgmSource.Play();
                 bgmSource.DOFade(1f, 0.25f);
+            }
+        }
+
+        public void PlayEventBGM(string key, float volume)
+        {
+            if (bgmEventSource.isPlaying) bgmEventSource.DOFade(0f, 0.25f).OnComplete(() =>
+                {
+                    if (soundDB.ContainsKey(key))
+                    {
+                        bgmEventSource.clip = soundDB[key];
+                        bgmEventSource.loop = true;
+                        bgmEventSource.Play();
+                        bgmEventSource.DOFade(volume, 0.25f);
+                    }
+                }
+            );
+            else if (soundDB.ContainsKey(key))
+            {
+                bgmEventSource.clip = soundDB[key];
+                bgmEventSource.loop = true;
+                bgmEventSource.Play();
+                bgmEventSource.DOFade(volume, 0.25f);
             }
         }
 

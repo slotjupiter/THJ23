@@ -15,5 +15,5 @@ MonoBehaviour:
   KeyItem: 0
   itemType: 1
   itemSprite: {fileID: 21300000, guid: 1359dd61ac517ea4aa98ddfc3249e689, type: 3}
-  itemName: Hand
-  itemDescription: Some random rotten hand.
+  itemName: Arms
+  itemDescription: Some random rotten arms
